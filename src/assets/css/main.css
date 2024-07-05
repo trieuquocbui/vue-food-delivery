@@ -1,0 +1,42 @@
+@import url('../css/base.css');
+@import url('../css/layout.css');
+@import url('../css//spacing.css');
+
+#app {
+  font-size: 62.5%;
+  height: 100%;
+}
+
+.breadcrumb {
+  display: flex;
+  font-size: 1.8em;
+}
+
+.breadcrumb-item {
+
+}
+
+.breadcrumb .breadcrumb-item {
+  
+}
+
+.breadcrumb .breadcrumb-item a {
+  display: inline-block;
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.breadcrumb .breadcrumb-item:not(:last-child) a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb .breadcrumb-item:not(:first-child) a::before {
+  display: inline-block;
+  content: '/';
+  padding: 0 5px;
+  color: var(--text-color);
+}
+
+.breadcrumb .breadcrumb-item:last-child a {
+  color: var(--text-color);
+}

@@ -1,0 +1,163 @@
+.main {
+}
+
+.container {
+}
+
+.content {
+  padding: 10px;
+  background-color: var(--content-dashboard-color-background);
+}
+
+.content-heading {
+}
+
+.content-heading h2 {
+  font-size: 3em;
+  margin: 0;
+  font-weight: 500;
+}
+
+.content-nav {
+}
+
+.content-nav-list-item {
+}
+
+.content-nav-list-item-link.active {
+  background-color: var(--acctive-color);
+  color: var(--white-color);
+}
+
+.content-nav-list-item-link:hover {
+  background-color: var(--acctive-color);
+  color: var(--white-color);
+}
+
+.content-nav-list-item-link {
+  font-size: 1.8em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  height: 40px;
+  background-color: var(--unacctive-color);
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+.content-nav-list-item-link a {
+  font-size: 1.8em;
+}
+
+.content-main {
+  background-color: var(--white-background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+}
+.content-main-header {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.6em;
+  flex-direction: row;
+}
+
+.content-main-add {
+  display: flex;
+  align-items: center;
+}
+
+.content-main-add span {
+}
+
+.content-main-add-title {
+  font-size: 1.2em;
+}
+
+.content-main-add-btn {
+  border-radius: 50%;
+  height: 30px;
+  width: 30px;
+  margin-left: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+.content-main-add-btn:hover {
+  background-color: #d3d3d4;
+}
+
+.content-main-add-btn i {
+}
+
+.content-main-list {
+  display: flex;
+}
+
+.container-list {
+  width: 100%;
+}
+
+.container-heading-list {
+  font-size: 18px;
+  background: linear-gradient(180deg, var(--one-primary-color), var(--two-primary-color));
+  color: var(--text-color);
+  padding: 12px 15px;
+}
+
+.container-content-list {
+}
+
+.container-content-item {
+  display: flex;
+  align-items: center;
+  font-size: 1.6em;
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.container-content-item:nth-of-type(even) {
+  background-color: var(--white-color);
+}
+
+.img {
+  width: 70px;
+  height: 70px;
+}
+
+.btn-operation {
+  outline: none;
+  border: 1px solid var(--border-color);
+  background-color: var(--hover-color);
+  opacity: 0.8;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+}
+
+.btn-operation i {
+  color: var(--white-color);
+}
+
+.btn-operation:hover {
+  background-color: var(--active-color);
+  opacity: 1;
+}
+
+.operation {
+}
+
+.btn-add svg,
+.btn-infor svg,
+.btn-update svg,
+.btn-remove svg {
+  font-size: 1.8em;
+}
+
+.btn-add {
+}
