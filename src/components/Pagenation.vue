@@ -44,47 +44,47 @@ function getPaginationGenerator(): (number | string)[] {
 <template>
   <div class="content_main_pagination">
     <div class="pagination">
-      <button
+      <div
         class="pagination_item"
         :class="[{ unactive: props.currentPageNumber == 1 }]"
         :disabled="props.currentPageNumber == 1"
         @click="$emit('selectedPage', 1)"
       >
         <font-awesome-icon :icon="['fas', 'angles-left']" />
-      </button>
-      <button
+      </div>
+      <div
         class="pagination_item"
         :class="[{ unactive: props.currentPageNumber == 1 }]"
         :disabled="props.currentPageNumber == 1"
         @click="$emit('selectedPage', props.currentPageNumber - 1)"
       >
         <font-awesome-icon :icon="['fas', 'angle-left']" />
-      </button>
-      <button
+      </div>
+      <div
         v-for="page in getPaginationGenerator()"
         class="pagination_item"
         @click="$emit('selectedPage', page)"
         :class="[{ active: page == props.currentPageNumber }]"
       >
         {{ page }}
-      </button>
+      </div>
 
-      <button
+      <div
         class="pagination_item"
         :class="[{ unactive: props.currentPageNumber == props.totalPageNumber }]"
         :disabled="props.currentPageNumber == props.totalPageNumber"
         @click="$emit('selectedPage', props.currentPageNumber + 1)"
       >
         <font-awesome-icon :icon="['fas', 'angle-right']" />
-      </button>
-      <button
+      </div>
+      <div
         class="pagination_item"
         :ngClass="[{ unactive: props.currentPageNumber == props.totalPageNumber }]"
         :disabled="props.currentPageNumber == props.totalPageNumber"
         @click="$emit('selectedPage', props.totalPageNumber)"
       >
         <font-awesome-icon :icon="['fas', 'angles-right']" />
-      </button>
+      </div>
     </div>
   </div>
 </template>
@@ -97,7 +97,7 @@ function getPaginationGenerator(): (number | string)[] {
 }
 
 .pagination {
-  font-size: 1.6em;
+  font-size: 1.4em;
   display: flex;
 }
 
@@ -115,6 +115,7 @@ function getPaginationGenerator(): (number | string)[] {
 
 .pagination_item:not(.unactive):hover {
   background-color: var(--acctive-color);
+  color: var(--white-color);
 }
 
 .pagination_item.active {

@@ -4,7 +4,6 @@ import Modal from '../../views/common/Modal.vue'
 import type ModalModel from '@/models/Modal'
 import type PagenationModel from '@/models/Pagenation'
 import { reactive } from 'vue'
-import { RouterView } from 'vue-router'
 
 let pagenation = reactive<PagenationModel>({
   currentPageNumber: 1,
@@ -25,60 +24,51 @@ const selectedAcction = (acction: boolean) => {
   console.log(acction)
   modal.display = 'none'
 }
-
 </script>
-
 <template>
- <div class="content-main">
-      <div class="content-main-header">
-        <div class="content-main-add">
-          <h3 class="content-main-add-title">Thêm nhân viên:</h3>
-          <div class="operation">
-            <button
-              @click="$router.push('/admin/account/employee/add')"
-              class="ml-4 btn-operation btn-add"
-              title="Thêm tài khoản"
-            >
-              <font-awesome-icon :icon="['fas', 'plus']" />
-            </button>
-          </div>
+  <div class="content-main">
+    <div class="content-main-header">
+      <form class="form" action="">
+        <div class="form-group">
+          <input class="form-group-input" type="search" placeholder="Tìm kiếm..." />
         </div>
-        <form class="form" action="">
-          <div class="form-group">
-            <input class="form-group-input" type="search" placeholder="Tìm kiếm..." />
-          </div>
-        </form>
-      </div>
-      <div class="content-main-list">
-        <div class="container-list">
-          <div class="container-heading-list row">
-            <div class="l-3">Mã bài báo</div>
-            <div class="l-4-o-5">Tên bài báo</div>
-            <div class="l-1-o-5">Nguồn báo</div>
-            <div class="l-1-o-5">Chủ đề</div>
-            <div class="l-1-o-5">Thao tác</div>
-          </div>
-          <div class="container-content-list">
-            <div class="container-content-item">
-              <div class="l-3">asd</div>
-              <div class="l-4-o-5">asd</div>
-              <div class="l-1-o-5">asd</div>
-              <div class="l-1-o-5">asd</div>
-              <div class="l-1-o-5">
-                <div class="operation">
-                  <!-- <button [routerLink]="['information', item.id]" class="btn-operation btn-infor" title="Chi tiết bài báo" ><i class="fa-solid fa-circle-info"></i></button>
-                <button [routerLink]="['edit', item.id]" class="btn-operation btn-update" title="Điều chỉnh nguồn báo" ><i class="fa-solid fa-pen"></i></button>
-                <button class="btn-operation btn-remove" [appModal]="item.id!" [positionClose]="i" [widthSize]="'20%'" title="Xoá nguồn báo"><i class="fa-solid fa-trash"></i></button> -->
-                  <!-- <ng-template #notify> Bạn muốn xoá chủ đề này! </ng-template> -->
-                  <!-- <app-modal [modelId]="item.id!" [template]="notify" (checked)="checked($event,item)"></app-modal> -->
+      </form>
+    </div>
+    <div class="content-main-list">
+      <div class="container-list">
+        <div class="container-heading-list row">
+          <div class="l-2">Tên tài khoản</div>
+          <div class="l-2">Họ và tên</div>
+          <div class="l-2">Số điện thoại</div>
+          <div class="l-5">Địa chỉ</div>
+          <div class="l-1">Thao tác</div>
+        </div>
+        <div class="container-content-list">
+          <div class="container-content-item">
+            <div class="l-2">Admin</div>
+            <div class="l-2">Bùi Quốc Triệu</div>
+            <div class="l-2">0869070142</div>
+            <div class="l-5">Hồ chí Minh</div>
+            <div class="l-1">
+              <div class="operation row-offset-4-wrap">
+                <div class="col-offset-4 l-4">
+                  <button class="btn-operation btn-infor" title="Thông tin">
+                    <font-awesome-icon :icon="['fas', 'info']" />
+                  </button>
+                </div>
+                <div class="col-offset-4 l-4">
+                  <button class="btn-operation btn-remove" title="Cho nhân viên nghỉ">
+                    <font-awesome-icon :icon="['fas', 'trash']" />
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <Pagenation v-bind="pagenation" @selected-page="selectedPage"></Pagenation>
     </div>
+    <Pagenation v-bind="pagenation" @selected-page="selectedPage"></Pagenation>
+  </div>
 
-    <Modal v-bind="modal" @selected-acction="selectedAcction"></Modal>
+  <Modal v-bind="modal" @selected-acction="selectedAcction"></Modal>
 </template>

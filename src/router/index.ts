@@ -5,7 +5,9 @@ const AdminView = () => import('../views/admin/AdminView.vue')
 const LoginView = () => import('../views/auth/LoginView.vue')
 const HomeView = () => import('../views/admin/HomeView.vue')
 const ProductView = () => import('../views/admin/ProductView.vue')
+const OrdertView = () => import('../views/admin/OrderView.vue')
 const AccountView = () => import('../views/admin/AccountView.vue')
+const CategoryView = () => import('../views/admin/CateroryView.vue')
 const FormEmployeeView = () => import('../views/admin/FormEmployeeView.vue')
 const EmployeeAccountView = () => import('../views/admin/EmpoyeeAccountView.vue')
 const CustomerAccountView = () => import('../views/admin/CustomerAccountView.vue')
@@ -19,6 +21,7 @@ const routes = [
     component: AdminView,
     children: [
       { path: 'home', component: HomeView },
+      { path: 'category', component: CategoryView },
       {
         path: 'product',
         redirect: '/admin/product/list',
@@ -41,6 +44,10 @@ const routes = [
           },
           { path: 'customer', component: CustomerAccountView }
         ]
+      },
+      {
+        path: 'order',
+        component: OrdertView
       }
     ]
   },

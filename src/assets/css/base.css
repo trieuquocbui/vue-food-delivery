@@ -90,7 +90,7 @@ video {
   vertical-align: baseline;
 }
 
-a{
+a {
   text-decoration: none;
 }
 
@@ -140,8 +140,9 @@ table {
 
 :root {
   --h-text-color: rgba(60, 60, 67);
-  --text-color: rgba(60, 60, 67, 0.78);
-  --white-color: #fff;
+  /* rgba(60, 60, 67, 0.78) */
+  --text-color: #3b3b3b;
+  --white-color: #ffffff;
   --white-background-color: #f7f7f7;
   /* #47F5AB #62F54C #A7F547 #47F5E6 #343a40*/
   --color-background: #71ff85;
@@ -150,5 +151,10 @@ table {
   --error-color: #f5322b;
   --border-color: #d8d8d8;
   --dashboard-color-background: #343a40;
-  --content-dashboard-color-background: #a5c5ba;
+  --content-dashboard-color-background: #e9ecef;
+
+  --add-color: #28a745;
+  --infor-color: #17a2b8;
+  --edit-color: #f39c12;
+  --delete-color: #e74c3c;
 }

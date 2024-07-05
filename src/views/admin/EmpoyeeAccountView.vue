@@ -49,25 +49,35 @@ const selectedAcction = (acction: boolean) => {
     <div class="content-main-list">
       <div class="container-list">
         <div class="container-heading-list row">
-          <div class="l-3">Mã bài báo</div>
-          <div class="l-4-o-5">Tên bài báo</div>
-          <div class="l-1-o-5">Nguồn báo</div>
-          <div class="l-1-o-5">Chủ đề</div>
-          <div class="l-1-o-5">Thao tác</div>
+          <div class="l-2">Tên tài khoản</div>
+          <div class="l-2">Họ và tên</div>
+          <div class="l-2">Số điện thoại</div>
+          <div class="l-5">Địa chỉ</div>
+          <div class="l-1">Thao tác</div>
         </div>
         <div class="container-content-list">
           <div class="container-content-item">
-            <div class="l-3">asd</div>
-            <div class="l-4-o-5">asd</div>
-            <div class="l-1-o-5">asd</div>
-            <div class="l-1-o-5">asd</div>
-            <div class="l-1-o-5">
-              <div class="operation">
-                <!-- <button [routerLink]="['information', item.id]" class="btn-operation btn-infor" title="Chi tiết bài báo" ><i class="fa-solid fa-circle-info"></i></button>
-                <button [routerLink]="['edit', item.id]" class="btn-operation btn-update" title="Điều chỉnh nguồn báo" ><i class="fa-solid fa-pen"></i></button>
-                <button class="btn-operation btn-remove" [appModal]="item.id!" [positionClose]="i" [widthSize]="'20%'" title="Xoá nguồn báo"><i class="fa-solid fa-trash"></i></button> -->
-                <!-- <ng-template #notify> Bạn muốn xoá chủ đề này! </ng-template> -->
-                <!-- <app-modal [modelId]="item.id!" [template]="notify" (checked)="checked($event,item)"></app-modal> -->
+            <div class="l-2">Admin</div>
+            <div class="l-2">Bùi Quốc Triệu</div>
+            <div class="l-2">0869070142</div>
+            <div class="l-5">Hồ chí Minh</div>
+            <div class="l-1">
+              <div class="operation row-offset-4-wrap">
+                <div class="col-offset-4 l-4">
+                  <button class="btn-operation btn-infor" title="Thông tin">
+                    <font-awesome-icon :icon="['fas', 'info']" />
+                  </button>
+                </div>
+                <div class="col-offset-4 l-4">
+                  <button class="btn-operation btn-update" title="Chỉnh sữa">
+                    <font-awesome-icon :icon="['fas', 'pen']" />
+                  </button>
+                </div>
+                <div class="col-offset-4 l-4">
+                  <button class="btn-operation btn-remove" title="Cho nhân viên nghỉ">
+                    <font-awesome-icon :icon="['fas', 'trash']" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>

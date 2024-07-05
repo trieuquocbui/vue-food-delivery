@@ -1,16 +1,17 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type NavModel from '@/models/NavModel'
+import Breadcrumb from '@/components/admin/Breadcrumb.vue'
+
+let breadcrumb: NavModel[] = [
+  { title: 'Trang chủ', path: '/admin/home' },
+  { title: 'Danh sách sản phẩm', path: '/admin/proudct' },
+  { title: 'Tạo sản phẩm', path: '' }
+]
+</script>
 
 <template>
   <div class="content">
-    <ul class="breadcrumb mb-10">
-      <li class="breadcrumb-item">
-        <router-link to="/admin/home">Trang chủ</router-link>
-      </li>
-      <li class="breadcrumb-item">
-        <router-link to="/admin/account">Danh sách sản phẩm</router-link>
-      </li>
-      <li class="breadcrumb-item"><a>Tạo sản phẩm</a></li>
-    </ul>
+    <Breadcrumb :navs="breadcrumb"></Breadcrumb>
     <div class="content-heading mb-10">
       <h2>Biểu mẫu nhập thông tin sản phẩm</h2>
     </div>

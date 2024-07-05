@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import type NavModel from '@/models/NavModel';
 import logo from '../../assets/logo.svg'
-</script>
 
+const props = defineProps<{ navs: NavModel[] }>()
+</script>
+  
 <template>
   <div class="navbar">
     <div class="navbar-logo">
@@ -12,19 +15,9 @@ import logo from '../../assets/logo.svg'
     </div>
     <div class="navbar-body">
       <ul class="navbar-body-menu">
-        <li class="navbar-body-item">
-          <router-link to="/admin/account" class="navbar-body-item-link" activeClass="active"
-            >Quản lí tài khoản</router-link
-          >
-        </li>
-        <li class="navbar-body-item">
-          <router-link to="/admin/product" class="navbar-body-item-link" activeClass="active"
-            >Quản lí sản phẩm</router-link
-          >
-        </li>
-        <li class="navbar-body-item">
-          <router-link to="/admin/order" class="navbar-body-item-link" activeClass="active"
-            >Quản lí đơn hàng</router-link
+        <li class="navbar-body-item" v-for="nav in props.navs">
+          <router-link :to="nav.path" class="navbar-body-item-link" activeClass="active"
+            >{{ nav.title }}</router-link
           >
         </li>
       </ul>

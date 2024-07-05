@@ -7,7 +7,10 @@ import {
   faAngleLeft,
   faAngleDoubleLeft,
   faAngleRight,
-  faAngleDoubleRight
+  faAngleDoubleRight,
+  faTrash,
+  faInfo,
+  faPen
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -17,7 +20,10 @@ library.add(
   faAngleLeft,
   faAngleDoubleLeft,
   faAngleRight,
-  faAngleDoubleRight
+  faAngleDoubleRight,
+  faTrash,
+  faInfo,
+  faPen
 )
 
 export default FontAwesomeIcon

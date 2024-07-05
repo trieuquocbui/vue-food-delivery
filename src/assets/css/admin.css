@@ -129,8 +129,7 @@
 
 .btn-operation {
   outline: none;
-  border: 1px solid var(--border-color);
-  background-color: var(--hover-color);
+  background-color: var(--unacctive-color);
   opacity: 0.8;
   justify-content: center;
   display: flex;
@@ -138,15 +137,13 @@
   height: 30px;
   width: 30px;
   border-radius: 50%;
-}
-
-.btn-operation i {
-  color: var(--white-color);
+  color: var(--text-color);
 }
 
 .btn-operation:hover {
-  background-color: var(--active-color);
+  background-color: var(--acctive-color);
   opacity: 1;
+  color: var(--white-color);
 }
 
 .operation {
@@ -156,8 +153,21 @@
 .btn-infor svg,
 .btn-update svg,
 .btn-remove svg {
-  font-size: 1.8em;
+  font-size: 1.4em;
 }
 
-.btn-add {
+/* .btn-add svg{
+  color: var(--add-color);
 }
+
+.btn-infor svg{
+  color: var(--infor-color);
+}
+
+.btn-update svg{
+  color: var(--edit-color);
+}
+
+.btn-remove svg{
+  color: var(--delete-color);
+} */
