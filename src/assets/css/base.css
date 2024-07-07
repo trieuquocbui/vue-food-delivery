@@ -139,8 +139,6 @@ table {
 }
 
 :root {
-  --h-text-color: rgba(60, 60, 67);
-  /* rgba(60, 60, 67, 0.78) */
   --text-color: #3b3b3b;
   --white-color: #ffffff;
   --white-background-color: #f7f7f7;
