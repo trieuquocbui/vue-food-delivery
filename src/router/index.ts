@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import OrderView from '../views/admin/OrderView.vue'
 
 const NotFoundView = () => import('../views/common/NotFoundView.vue')
 const AdminView = () => import('../views/admin/AdminView.vue')
@@ -16,6 +17,7 @@ const ProductFormView = () => import('../views/admin/ProductFormView.vue')
 const CategoryListView = () => import('../views/admin/CategoryListView.vue')
 const ProductListView = () => import('../views/admin/ProductListView.vue')
 const PriceListView = () => import('../views/admin/PriceListView.vue')
+const OrderListView = () => import('../views/admin/OrderListView.vue')
 
 const routes = [
   { path: '/', component: LoginView },
@@ -61,7 +63,9 @@ const routes = [
       },
       {
         path: 'order',
-        component: OrdertView
+        component: OrdertView,
+        redirect: '/admin/order/waite',
+        children: [{ path: ':orderStatus', component: OrderListView }]
       }
     ]
   },

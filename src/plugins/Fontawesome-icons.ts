@@ -11,7 +11,8 @@ import {
   faTrash,
   faInfo,
   faPen,
-  faMoneyCheckDollar
+  faMoneyCheckDollar,
+  faRectangleList
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -25,7 +26,8 @@ library.add(
   faTrash,
   faInfo,
   faPen,
-  faMoneyCheckDollar
+  faMoneyCheckDollar,
+  faRectangleList
 )
 
 export default FontAwesomeIcon
