@@ -13,7 +13,6 @@ let contentnav: NavModel[] = [
   { title: 'Nhân viên', path: '/admin/account/employee' },
   { title: 'Khách hàng', path: '/admin/account/customer' }
 ]
-
 </script>
 
 <template>

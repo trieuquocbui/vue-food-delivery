@@ -8,10 +8,14 @@ const ProductView = () => import('../views/admin/ProductView.vue')
 const OrdertView = () => import('../views/admin/OrderView.vue')
 const AccountView = () => import('../views/admin/AccountView.vue')
 const CategoryView = () => import('../views/admin/CateroryView.vue')
-const FormEmployeeView = () => import('../views/admin/FormEmployeeView.vue')
+const CategoryFormView = () => import('../views/admin/CategoryForm.vue')
+const EmployeeFormView = () => import('../views/admin/EmployeeFormView.vue')
 const EmployeeAccountView = () => import('../views/admin/EmpoyeeAccountView.vue')
 const CustomerAccountView = () => import('../views/admin/CustomerAccountView.vue')
-const FormProductView = () => import('../views/admin/FormProductView.vue')
+const ProductFormView = () => import('../views/admin/ProductFormView.vue')
+const CategoryListView = () => import('../views/admin/CategoryListView.vue')
+const ProductListView = () => import('../views/admin/ProductListView.vue')
+const PriceListView = () => import('../views/admin/PriceListView.vue')
 
 const routes = [
   { path: '/', component: LoginView },
@@ -21,13 +25,23 @@ const routes = [
     component: AdminView,
     children: [
       { path: 'home', component: HomeView },
-      { path: 'category', component: CategoryView },
+      {
+        path: 'category',
+        component: CategoryView,
+        children: [
+          { path: '', component: CategoryListView },
+          { path: 'add', component: CategoryFormView },
+          { path: 'update/:categoryId', component: CategoryFormView }
+        ]
+      },
       {
         path: 'product',
-        redirect: '/admin/product/list',
+        component: ProductView,
         children: [
-          { path: 'list', component: ProductView },
-          { path: 'add', component: FormProductView }
+          { path: '', component: ProductListView },
+          { path: 'add', component: ProductFormView },
+          { path: 'update/:productId', component: ProductFormView },
+          { path: ':productId/price', component: PriceListView }
         ]
       },
       {
@@ -39,7 +53,7 @@ const routes = [
             path: 'employee',
             children: [
               { path: '', component: EmployeeAccountView },
-              { path: 'add', component: FormEmployeeView }
+              { path: 'add', component: EmployeeFormView }
             ]
           },
           { path: 'customer', component: CustomerAccountView }

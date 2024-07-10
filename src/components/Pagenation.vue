@@ -44,47 +44,47 @@ function getPaginationGenerator(): (number | string)[] {
 <template>
   <div class="content_main_pagination">
     <div class="pagination">
-      <div
+      <button
         class="pagination_item"
         :class="[{ unactive: props.currentPageNumber == 1 }]"
         :disabled="props.currentPageNumber == 1"
         @click="$emit('selectedPage', 1)"
       >
         <font-awesome-icon :icon="['fas', 'angles-left']" />
-      </div>
-      <div
+      </button>
+      <button
         class="pagination_item"
         :class="[{ unactive: props.currentPageNumber == 1 }]"
         :disabled="props.currentPageNumber == 1"
         @click="$emit('selectedPage', props.currentPageNumber - 1)"
       >
         <font-awesome-icon :icon="['fas', 'angle-left']" />
-      </div>
-      <div
+      </button>
+      <button
         v-for="page in getPaginationGenerator()"
         class="pagination_item"
         @click="$emit('selectedPage', page)"
         :class="[{ active: page == props.currentPageNumber }]"
       >
         {{ page }}
-      </div>
+      </button>
 
-      <div
+      <button
         class="pagination_item"
         :class="[{ unactive: props.currentPageNumber == props.totalPageNumber }]"
         :disabled="props.currentPageNumber == props.totalPageNumber"
         @click="$emit('selectedPage', props.currentPageNumber + 1)"
       >
         <font-awesome-icon :icon="['fas', 'angle-right']" />
-      </div>
-      <div
+      </button>
+      <button
         class="pagination_item"
         :ngClass="[{ unactive: props.currentPageNumber == props.totalPageNumber }]"
         :disabled="props.currentPageNumber == props.totalPageNumber"
         @click="$emit('selectedPage', props.totalPageNumber)"
       >
         <font-awesome-icon :icon="['fas', 'angles-right']" />
-      </div>
+      </button>
     </div>
   </div>
 </template>

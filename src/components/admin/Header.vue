@@ -2,7 +2,7 @@
   <div class="header">
     <div class="l-6">
       <div class="header_nav">
-        <RouterLink class="header_nav_link" to="/admin/home">Trang chủ</RouterLink>
+        <RouterLink class="header_nav_link" to="/admin/home" activeClass="active">Trang chủ</RouterLink>
       </div>
     </div>
     <div class="l-6">

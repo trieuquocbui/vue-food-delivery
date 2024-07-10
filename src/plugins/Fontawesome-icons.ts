@@ -10,7 +10,8 @@ import {
   faAngleDoubleRight,
   faTrash,
   faInfo,
-  faPen
+  faPen,
+  faMoneyCheckDollar
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -23,7 +24,8 @@ library.add(
   faAngleDoubleRight,
   faTrash,
   faInfo,
-  faPen
+  faPen,
+  faMoneyCheckDollar
 )
 
 export default FontAwesomeIcon

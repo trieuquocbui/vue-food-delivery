@@ -86,6 +86,5 @@ const selectedAcction = (acction: boolean) => {
     </div>
     <Pagenation v-bind="pagenation" @selected-page="selectedPage"></Pagenation>
   </div>
-
   <Modal v-bind="modal" @selected-acction="selectedAcction"></Modal>
 </template>
