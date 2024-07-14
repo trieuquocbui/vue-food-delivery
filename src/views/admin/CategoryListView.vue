@@ -1,20 +1,67 @@
 <script setup lang="ts">
-import type PagenationModel from '@/models/Pagenation'
-import { reactive } from 'vue'
+import type PagenationModel from '@/models/PagenationModel'
+import { reactive, ref } from 'vue'
 import Pagenation from '../../components/Pagenation.vue'
 import Breadcrumb from '@/components/admin/Breadcrumb.vue'
 import type BreadcrumbModel from '@/models/NavModel'
+import { useRoute } from 'vue-router'
+import type CategoryModel from '@/models/CategoryModel'
+import PagenationHelper from '@/helpers/PagenationHelper'
+import type QueryModel from '@/models/QueryModel'
+import stores from '@/stores/Store'
+import type PagenationResponseModel from '@/models/PagenationResponseModel'
+import type APIResponseModel from '@/models/ApiResponseModel'
 
 let breadcrumb: BreadcrumbModel[] = [
   { title: 'Trang chủ', path: '/admin/home' },
   { title: 'Danh sách danh mục', path: '' }
 ]
 
-let pagenation = reactive<PagenationModel>({
-  currentPageNumber: 1,
-  offset: 2,
-  totalPageNumber: 10
+const route = useRoute()
+
+const pagenation = reactive<PagenationModel<CategoryModel[]>>({
+  currentPageNumber: route.query.page
+    ? Number(route.query.page)
+    : PagenationHelper.CURRENT_PAGE_NUMBER,
+  offset: route.query.limit ? Number(route.query.limit) : PagenationHelper.OFFSET,
+  totalPageNumber: 0,
+  searchQuery: route.query.search ? String(route.query.search) : PagenationHelper.SEARCH_QUERY,
+  sortField: route.query.sortBy ? String(route.query.sortBy) : PagenationHelper.SORT_FIELD,
+  sortOrder: route.query.sortOrder ? String(route.query.sortOrder) : PagenationHelper.SORT_ORDER,
+  data: []
 })
+
+const queries = reactive<QueryModel>({
+  page: pagenation.currentPageNumber,
+  limit: pagenation.offset,
+  search: pagenation.searchQuery,
+  sortField: pagenation.sortField,
+  sortOrder: pagenation.sortOrder
+})
+
+let category = reactive<CategoryModel>({
+  id: '',
+  name: '',
+  thumbnail: '',
+  status: false
+})
+
+const fetchData = async () => {
+  try {
+    const result: APIResponseModel<PagenationResponseModel<CategoryModel[]>> =
+      await stores.dispatch('account/getAccountList', {
+        pagenationInfor: queries,
+        roleId: 'EM'
+      })
+    pagenation.data = result.data?.content || []
+    pagenation.totalPageNumber = result.data?.totalPages || 0
+    pagenation.currentPageNumber = result.data?.page || pagenation.currentPageNumber
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const message = ref<string>('')
 
 const selectedPage = (page: number) => {
   pagenation.currentPageNumber = page

@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import LoginModel from '@/models/Login'
+import type LoginModel from '@/models/LoginModel'
 import { reactive, ref } from 'vue'
-import { login } from '@/services/AuthService'
-import type APIResponse from '@/models/ApiResponse'
 import stores from '@/stores/Store'
 import router from '@/router'
 import Code from '@/helpers/CodeHelper'
+import type APIResponse from '@/models/ApiResponseModel'
 
-let loginModel = reactive(new LoginModel())
+let loginModel = reactive<LoginModel>({ username: '', password: '' })
 
-let errors = reactive(new LoginModel())
-
-let error = ref('')
+let errors = reactive<LoginModel>({ username: '', password: '' })
 
 const hideError = (field: string) => {
   if (field == 'username' && errors.username != '') {
@@ -29,14 +26,18 @@ const validate = () => {
 
 const submitLogin = async () => {
   if (validate()) {
-    let result: APIResponse = await login(loginModel)
-    if (result.code == Code.SUCCESS) {
-      stores.dispatch('auth/login', result.data)
-      router.push({ path: '/admin/home' })
-    } else {
+    try {
+      let data: APIResponse<string> = await stores.dispatch('auth/login', loginModel)
+      if (data.code == Code.SUCCESS) {
+        router.push({ path: '/admin/home' })
+      }
+    } catch (error: any) {
+      if (error.code == Code.WRONG_PASSWORD) {
+        errors.password = error.message
+      } else if (error.code == Code.ENTITY_NOT_EXIST) {
+        errors.username = error.message
+      }
     }
-
-    console.log(stores.getters['auth/getRole'])
   }
 }
 </script>

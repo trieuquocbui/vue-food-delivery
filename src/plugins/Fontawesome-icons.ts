@@ -2,7 +2,6 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faUser,
-  faLock,
   faPlus,
   faAngleLeft,
   faAngleDoubleLeft,
@@ -12,7 +11,9 @@ import {
   faInfo,
   faPen,
   faMoneyCheckDollar,
-  faRectangleList
+  faRectangleList,
+  faLock,
+  faLockOpen
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -27,7 +28,8 @@ library.add(
   faInfo,
   faPen,
   faMoneyCheckDollar,
-  faRectangleList
+  faRectangleList,
+  faLockOpen
 )
 
 export default FontAwesomeIcon

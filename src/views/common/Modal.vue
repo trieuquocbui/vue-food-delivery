@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type ModalModel from '@/models/Modal'
+import type ModalModel from '@/models/ModalModel'
 import { ref, watch } from 'vue'
 
 const props = defineProps<ModalModel>()
@@ -22,26 +22,31 @@ const selected = (value: boolean) => {
 </script>
 
 <template>
-  <div :id="props.modelId" class="modal" v-bind:style="{ display: modalDisplay }">
+  <div class="modal" v-bind:style="{ display: modalDisplay }">
     <div class="modal-content">
       <span class="close" @click="selected(false)">&times;</span>
       <div class="container-modal">
-        <h1>{{ modalDisplay }}</h1>
         <h1 class="title-modal" v-if="props.title == undefined">Thông báo</h1>
         <h1 class="title-modal" v-else-if="props.title != undefined">{{ props.title }}</h1>
-        <p class="message" v-html="props.content"></p>
+        <div class="message">
+          <slot name="content"></slot>
+        </div>
         <div class="clearfix" v-if="props.showBtn">
-          <button @click="selected(true)" v-if="props.submitName == undefined" class="confirmbtn">
+          <button
+            @click="selected(true)"
+            v-if="props.submitName == undefined"
+            class="btn-modal confirmbtn"
+          >
             Xác nhận
           </button>
           <button
             @click="selected(true)"
             v-else-if="props.submitName != undefined"
-            class="confirmbtn"
+            class="btn-modal confirmbtn"
           >
             {{ props.submitName }}
           </button>
-          <button @click="selected(false)" class="cancelbtn">Huỷ bỏ</button>
+          <button @click="selected(false)" class="btn-modal cancelbtn">Huỷ bỏ</button>
         </div>
       </div>
     </div>
@@ -68,7 +73,7 @@ const selected = (value: boolean) => {
   padding: 10px;
   background-color: #fefefe;
   border: 0.5px solid var(--border-color);
-  font-size: 1.6ex;
+  font-size: 1.6em;
   line-height: inherit;
   border-radius: 4px;
 }
@@ -92,7 +97,7 @@ const selected = (value: boolean) => {
   cursor: pointer;
 }
 
-button {
+.btn-modal {
   border-radius: 2px;
   color: white;
   padding: 4px;
@@ -102,20 +107,20 @@ button {
   opacity: 0.8;
 }
 
-button:hover {
+.btn-modal:hover {
   opacity: 1;
 }
 
 .confirmbtn {
   float: left;
   width: 30%;
-  background-color: var(--active-color);
+  background-color: var(--acctive-color);
 }
 
 .cancelbtn {
   float: right;
   width: 30%;
-  background-color: var(--wrong-color);
+  background-color: var(--error-color);
 }
 
 .clearfix::after {
@@ -131,7 +136,6 @@ button:hover {
 .title-modal {
   text-align: center;
   text-transform: uppercase;
-  color: var(--active-color);
   font-weight: 600;
 }
 </style>

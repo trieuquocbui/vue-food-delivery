@@ -1,5 +1,11 @@
+import type AccountModel from '@/models/AccountInforModel'
+import type ApiResponseModel from '@/models/ApiResponseModel'
+import type LoginModel from '@/models/LoginModel'
+import { login, registerEmployeeAccount } from '@/services/AuthService'
+
 interface AuthState {
   authToken: string
+  message: string
 }
 const AuthStore = {
   namespaced: true,
@@ -7,18 +13,50 @@ const AuthStore = {
     authToken: ''
   } as AuthState,
   mutations: {
-    setAuthToken(state: { authToken: string }, token: string) {
+    setToken(state: AuthState, token: string) {
       state.authToken = token
+      localStorage.setItem('authToken', token);
+    },
+    logout(state: AuthState) {
+      ;(state.authToken = ''), (state.message = '')
+      localStorage.removeItem('authToken');
     }
   },
   actions: {
-    login({ commit }: any, token: string) {
-      commit('setAuthToken', token)
+    login({ commit }: any, loginModel: LoginModel): Promise<ApiResponseModel<string>> {
+      return new Promise(async (resolve, reject) => {
+        try {
+          let result: ApiResponseModel<string> = await login(loginModel)
+          commit('setToken', result.data)
+          resolve(result)
+        } catch (error) {
+          reject(error)
+        }
+      })
+    },
+
+    logout({ commit }: any) {
+      commit('logout')
+    },
+
+    registerEmployeeAccount({ commit }: any, formData: FormData) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          let result: ApiResponseModel<AccountModel> = await registerEmployeeAccount(formData)
+          resolve(result)
+        } catch (error) {
+          reject(error)
+        }
+      })
     }
   },
   getters: {
-    getRole: (state: { authToken: any }) => {
+    getToken: (state: AuthState) => {
       return state.authToken
+    },
+
+    getMessage: (state: AuthState) => {
+      return state.message
     }
   }
 }

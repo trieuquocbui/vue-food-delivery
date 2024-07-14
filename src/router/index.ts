@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import OrderView from '../views/admin/OrderView.vue'
 
 const NotFoundView = () => import('../views/common/NotFoundView.vue')
 const AdminView = () => import('../views/admin/AdminView.vue')

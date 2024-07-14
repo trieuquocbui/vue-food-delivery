@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type NavModel from '@/models/NavModel';
+import type NavModel from '@/models/NavModel'
 import logo from '../../assets/logo.svg'
 
 const props = defineProps<{ navs: NavModel[] }>()
 </script>
-  
+
 <template>
   <div class="navbar">
     <div class="navbar-logo">
@@ -16,9 +16,9 @@ const props = defineProps<{ navs: NavModel[] }>()
     <div class="navbar-body">
       <ul class="navbar-body-menu">
         <li class="navbar-body-item" v-for="nav in props.navs">
-          <router-link :to="nav.path" class="navbar-body-item-link" activeClass="active"
-            >{{ nav.title }}</router-link
-          >
+          <router-link :to="nav.path" class="navbar-body-item-link" activeClass="active">{{
+            nav.title
+          }}</router-link>
         </li>
       </ul>
     </div>

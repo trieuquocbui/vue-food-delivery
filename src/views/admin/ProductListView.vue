@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type PagenationModel from '@/models/Pagenation'
+import type PagenationModel from '@/models/PagenationModel'
 import { reactive } from 'vue'
 import Pagenation from '../../components/Pagenation.vue'
 import Breadcrumb from '@/components/admin/Breadcrumb.vue'

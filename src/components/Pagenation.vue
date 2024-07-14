@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import type PagenationModel from '@/models/Pagenation'
-
-const props = defineProps<PagenationModel>()
+interface PagenationInfor {
+  currentPageNumber: number
+  offset: number
+  totalPageNumber: number
+}
+const props = defineProps<PagenationInfor>()
 
 function getPaginationGenerator(): (number | string)[] {
   const offsetNumber =
@@ -79,7 +82,7 @@ function getPaginationGenerator(): (number | string)[] {
       </button>
       <button
         class="pagination_item"
-        :ngClass="[{ unactive: props.currentPageNumber == props.totalPageNumber }]"
+        :class="[{ unactive: props.currentPageNumber == props.totalPageNumber }]"
         :disabled="props.currentPageNumber == props.totalPageNumber"
         @click="$emit('selectedPage', props.totalPageNumber)"
       >
@@ -116,6 +119,10 @@ function getPaginationGenerator(): (number | string)[] {
 .pagination_item:not(.unactive):hover {
   background-color: var(--acctive-color);
   color: var(--white-color);
+}
+
+.pagination_item.unactive {
+  background-color: var(--unacctive-color);
 }
 
 .pagination_item.active {

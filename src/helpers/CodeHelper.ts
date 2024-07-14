@@ -1,5 +1,13 @@
-enum Code {
-    SUCCESS = "1000"
+enum CodeHelper {
+  SUCCESS = '1000',
+  ERROR = '2000',
+  ENTIRY_EXIST = '3000',
+  ENTITY_NOT_EXIST = '4000',
+  ERROR_ID_EXIST = '5000',
+  ERROR_Name_EXIST = '6000',
+  ERROR_PHONE_EXIST = '7000',
+  WRONG_PASSWORD = '10000',
+  UNAUTHORIZATION = '11000'
 }
 
-export default Code
+export default CodeHelper

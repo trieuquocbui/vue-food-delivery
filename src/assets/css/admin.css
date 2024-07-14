@@ -1,4 +1,5 @@
 .main {
+  /* height: 100%; */
 }
 
 .container {
@@ -51,12 +52,13 @@
 }
 
 .content-main {
+  padding: 0px 10px;
   background-color: var(--white-background-color);
   border: 1px solid var(--border-color);
   border-radius: 5px;
 }
 .content-main-header {
-  padding: 10px;
+  padding: 10px 0px;
   display: flex;
   justify-content: space-between;
   font-size: 1.6em;
@@ -93,7 +95,6 @@
 }
 
 .content-main-list {
-  display: flex;
 }
 
 .container-list {
@@ -104,17 +105,18 @@
   font-size: 18px;
   background: linear-gradient(180deg, var(--one-primary-color), var(--two-primary-color));
   color: var(--text-color);
-  padding: 12px 15px;
+  padding: 10px 0px;
 }
 
 .container-content-list {
+  height: 348px;
 }
 
 .container-content-item {
   display: flex;
   align-items: center;
   font-size: 1.6em;
-  padding: 12px 15px;
+  padding: 10px 0px;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -138,6 +140,7 @@
   width: 30px;
   border-radius: 50%;
   color: var(--text-color);
+  border: none;
 }
 
 .btn-operation:hover {

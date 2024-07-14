@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Pagenation from '@/components/Pagenation.vue'
 import Modal from '../../views/common/Modal.vue'
-import type ModalModel from '@/models/Modal'
-import type PagenationModel from '@/models/Pagenation'
+import type ModalModel from '@/models/ModalModel'
+import type PagenationModel from '@/models/PagenationModel'
 import { reactive } from 'vue'
 
 let pagenation = reactive<PagenationModel>({
