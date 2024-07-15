@@ -1,6 +1,6 @@
 export default interface CategoryModel {
-  id: String
-  name: String
-  thumbnail: String
-  status: Boolean
+  id: string
+  name: string
+  thumbnail: string
+  status: boolean
 }

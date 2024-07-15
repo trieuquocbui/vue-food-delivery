@@ -92,8 +92,10 @@ const selectedAcction = async (action: boolean) => {
 const showModal = (value: AccountModel, action: string) => {
   account = value
   if (action == 'get') {
-    modal.open('Thông tin nhân viên', false, undefined, 'data')
-    image.value = AppHelper.imagePath + account.thumbnail
+    modal.open('Thông tin khach hàng', false, undefined, 'data')
+    if (account.thumbnail) {
+      image.value = AppHelper.imagePath + account.thumbnail
+    }
   } else {
     modal.open('Thông báo', true, undefined, 'message')
     if (action == 'remove') {

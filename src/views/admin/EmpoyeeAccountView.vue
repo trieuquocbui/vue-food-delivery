@@ -25,7 +25,7 @@ const pagenation = reactive<PagenationModel<AccountModel[]>>({
   offset: route.query.limit ? Number(route.query.limit) : PagenationHelper.OFFSET,
   totalPageNumber: 0,
   searchQuery: route.query.search ? String(route.query.search) : PagenationHelper.SEARCH_QUERY,
-  sortField: route.query.sortBy ? String(route.query.sortBy) : PagenationHelper.SORT_FIELD,
+  sortField: route.query.sortField ? String(route.query.sortField) : PagenationHelper.SORT_FIELD,
   sortOrder: route.query.sortOrder ? String(route.query.sortOrder) : PagenationHelper.SORT_ORDER,
   data: []
 })

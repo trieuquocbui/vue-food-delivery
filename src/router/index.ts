@@ -8,7 +8,7 @@ const ProductView = () => import('../views/admin/ProductView.vue')
 const OrdertView = () => import('../views/admin/OrderView.vue')
 const AccountView = () => import('../views/admin/AccountView.vue')
 const CategoryView = () => import('../views/admin/CateroryView.vue')
-const CategoryFormView = () => import('../views/admin/CategoryForm.vue')
+const CategoryFormView = () => import('../views/admin/CategoryFormView.vue')
 const EmployeeFormView = () => import('../views/admin/EmployeeFormView.vue')
 const EmployeeAccountView = () => import('../views/admin/EmpoyeeAccountView.vue')
 const CustomerAccountView = () => import('../views/admin/CustomerAccountView.vue')
@@ -32,7 +32,7 @@ const routes = [
         children: [
           { path: '', component: CategoryListView },
           { path: 'add', component: CategoryFormView },
-          { path: 'update/:categoryId', component: CategoryFormView }
+          { path: ':categoryId/edit', component: CategoryFormView }
         ]
       },
       {

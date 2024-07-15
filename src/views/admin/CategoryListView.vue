@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import type PagenationModel from '@/models/PagenationModel'
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import Pagenation from '../../components/Pagenation.vue'
 import Breadcrumb from '@/components/admin/Breadcrumb.vue'
 import type BreadcrumbModel from '@/models/NavModel'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import type CategoryModel from '@/models/CategoryModel'
 import PagenationHelper from '@/helpers/PagenationHelper'
 import type QueryModel from '@/models/QueryModel'
 import stores from '@/stores/Store'
 import type PagenationResponseModel from '@/models/PagenationResponseModel'
 import type APIResponseModel from '@/models/ApiResponseModel'
+import AppHelper from '@/helpers/AppHelper'
+import { useModal } from '@/composables/ModalComposable'
+import Modal from '../common/Modal.vue'
 
 let breadcrumb: BreadcrumbModel[] = [
   { title: 'Trang chủ', path: '/admin/home' },
@@ -18,15 +21,17 @@ let breadcrumb: BreadcrumbModel[] = [
 ]
 
 const route = useRoute()
+const router = useRouter()
+const modal = useModal()
 
 const pagenation = reactive<PagenationModel<CategoryModel[]>>({
   currentPageNumber: route.query.page
     ? Number(route.query.page)
     : PagenationHelper.CURRENT_PAGE_NUMBER,
-  offset: route.query.limit ? Number(route.query.limit) : PagenationHelper.OFFSET,
+  offset: route.query.limit ? Number(route.query.limit) : 3,
   totalPageNumber: 0,
   searchQuery: route.query.search ? String(route.query.search) : PagenationHelper.SEARCH_QUERY,
-  sortField: route.query.sortBy ? String(route.query.sortBy) : PagenationHelper.SORT_FIELD,
+  sortField: route.query.sortField ? String(route.query.sortField) : PagenationHelper.SORT_FIELD,
   sortOrder: route.query.sortOrder ? String(route.query.sortOrder) : PagenationHelper.SORT_ORDER,
   data: []
 })
@@ -39,6 +44,10 @@ const queries = reactive<QueryModel>({
   sortOrder: pagenation.sortOrder
 })
 
+const message = ref<string>('')
+
+let path = ref<string>(AppHelper.imagePath)
+
 let category = reactive<CategoryModel>({
   id: '',
   name: '',
@@ -49,10 +58,7 @@ let category = reactive<CategoryModel>({
 const fetchData = async () => {
   try {
     const result: APIResponseModel<PagenationResponseModel<CategoryModel[]>> =
-      await stores.dispatch('account/getAccountList', {
-        pagenationInfor: queries,
-        roleId: 'EM'
-      })
+      await stores.dispatch('category/getCategoryList', queries)
     pagenation.data = result.data?.content || []
     pagenation.totalPageNumber = result.data?.totalPages || 0
     pagenation.currentPageNumber = result.data?.page || pagenation.currentPageNumber
@@ -61,11 +67,62 @@ const fetchData = async () => {
   }
 }
 
-const message = ref<string>('')
-
 const selectedPage = (page: number) => {
   pagenation.currentPageNumber = page
 }
+
+const status = (value: boolean) => {
+  return value ? 'Hiện thị' : 'Không hiện thị'
+}
+
+const selectedAcction = async (action: boolean) => {
+  modal.close()
+  if (action) {
+    try {
+      const result: APIResponseModel<string> = await stores.dispatch(
+        'category/deleteCategory',
+        category.id
+      )
+      modal.open('Thông báo', false, undefined, 'message')
+      message.value = result.message
+      pagenation.data = pagenation.data.filter((data) => data.id !== result.data)
+    } catch (error: any) {
+      modal.open('Thông báo', false, undefined, 'message')
+      message.value = error.message
+    }
+  }
+}
+
+const showModal = (value: CategoryModel) => {
+  category = value
+  modal.open('Thông báo', true, undefined, 'message')
+  message.value = 'Chắc chắn bạn muốn xoá danh mục này!'
+}
+
+const redirectPage = (categoryId: String) => {
+  router.push(`/admin/category/${categoryId}/edit`)
+}
+
+watch(
+  () => ({
+    currentPageNumber: pagenation.currentPageNumber,
+    searchQuery: pagenation.searchQuery
+  }),
+  async (newPagenation, oldPagenation) => {
+    if (
+      newPagenation.currentPageNumber !== oldPagenation.currentPageNumber ||
+      newPagenation.searchQuery !== oldPagenation.searchQuery
+    ) {
+      queries.page = pagenation.currentPageNumber
+      queries.search = pagenation.searchQuery
+      await fetchData()
+    }
+  }
+)
+
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <template>
@@ -89,7 +146,12 @@ const selectedPage = (page: number) => {
       </div>
       <form class="form" action="">
         <div class="form-group">
-          <input class="form-group-input" type="search" placeholder="Tìm kiếm..." />
+          <input
+            class="form-group-input"
+            v-model="pagenation.searchQuery"
+            type="search"
+            placeholder="Tìm kiếm..."
+          />
         </div>
       </form>
     </div>
@@ -103,18 +165,31 @@ const selectedPage = (page: number) => {
           <div class="l-2">Thao tác</div>
         </div>
         <div class="container-content-list">
-          <div class="container-content-item">
+          <div class="container-content-item" v-for="category in pagenation.data">
             <div class="l-2">
-              <img src="../../assets/images/th.jpg" alt="" class="image" />
+              <img :src="path + category.thumbnail" alt="" class="image" />
             </div>
-            <div class="l-3">CT</div>
-            <div class="l-3">Cơm tấm</div>
-            <div class="l-2">Đang kinh doanh</div>
+            <div class="l-3">{{ category.id }}</div>
+            <div class="l-3">{{ category.name }}</div>
+            <div class="l-2">{{ status(category.status) }}</div>
             <div class="l-2">
               <div class="operation row-offset-4-wrap">
-                <div class="col-offset-4 l-4">
-                  <button class="btn-operation btn-update" title="Cho nhân viên nghỉ">
+                <div class="col-offset-4 l-2">
+                  <button
+                    class="btn-operation btn-update"
+                    title="Cho nhân viên nghỉ"
+                    @click="redirectPage(category.id)"
+                  >
                     <font-awesome-icon :icon="['fas', 'pen']" />
+                  </button>
+                </div>
+                <div class="col-offset-4 l-2">
+                  <button
+                    class="btn-operation btn-remove"
+                    title="Cho nhân viên nghỉ"
+                    @click="showModal(category)"
+                  >
+                    <font-awesome-icon :icon="['fas', 'trash']" />
                   </button>
                 </div>
               </div>
@@ -125,6 +200,12 @@ const selectedPage = (page: number) => {
     </div>
     <Pagenation v-bind="pagenation" @selected-page="selectedPage"></Pagenation>
   </div>
+
+  <Modal v-bind="modal.data" @selected-acction="selectedAcction">
+    <template #content v-if="modal.data.type == 'message'">
+      <p>{{ message }}</p>
+    </template>
+  </Modal>
 </template>
 
 <style scoped>

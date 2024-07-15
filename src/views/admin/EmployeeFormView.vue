@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import Account from '../../models/AccountInforModel'
-import ValidateAccount from '../../models/ValidateAccount'
+import ValidatedAccount from '../../models/ValidatedAccountModel'
 import type { GenderModel } from '@/models/GenderModel'
 import AppHelper from '@/helpers/AppHelper'
 import stores from '@/stores/Store'
@@ -15,7 +15,7 @@ const modal = useModal()
 
 const account = reactive<Account>(new Account())
 
-const errors = reactive<ValidateAccount>(new ValidateAccount())
+const errors = reactive<ValidatedAccount>(new ValidatedAccount())
 
 const imagePath = ref<string>(AppHelper.imageDefalut)
 
@@ -108,7 +108,7 @@ const submit = async () => {
       message.value = result.message
       modal.open('Thông báo', false, undefined, 'message')
     } catch (error: any) {
-      if (error.code == CodeHelper.ERROR_Name_EXIST) {
+      if (error.code == CodeHelper.ERROR_NAME_EXIST) {
         errors.username = error.message
       } else if (error.code == CodeHelper.ERROR_PHONE_EXIST) {
         errors.phoneNumber = error.message
