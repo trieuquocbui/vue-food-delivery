@@ -9,10 +9,11 @@ const OrdertView = () => import('../views/admin/OrderView.vue')
 const AccountView = () => import('../views/admin/AccountView.vue')
 const CategoryView = () => import('../views/admin/CateroryView.vue')
 const CategoryFormView = () => import('../views/admin/CategoryFormView.vue')
-const EmployeeFormView = () => import('../views/admin/EmployeeFormView.vue')
+const EmployeeAddtionFormView = () => import('../views/admin/EmployeeAddtionFormView.vue')
 const EmployeeAccountView = () => import('../views/admin/EmpoyeeAccountView.vue')
 const CustomerAccountView = () => import('../views/admin/CustomerAccountView.vue')
-const ProductFormView = () => import('../views/admin/ProductFormView.vue')
+const ProductAddtionFormView = () => import('../views/admin/ProductAddtionFormView.vue')
+const ProductEditingFormView = () => import('../views/admin/ProductEditingFormView.vue')
 const CategoryListView = () => import('../views/admin/CategoryListView.vue')
 const ProductListView = () => import('../views/admin/ProductListView.vue')
 const PriceListView = () => import('../views/admin/PriceListView.vue')
@@ -40,9 +41,10 @@ const routes = [
         component: ProductView,
         children: [
           { path: '', component: ProductListView },
-          { path: 'add', component: ProductFormView },
-          { path: 'update/:productId', component: ProductFormView },
-          { path: ':productId/price', component: PriceListView }
+          { path: 'add', component: ProductAddtionFormView },
+          { path: ':productId/edit', component: ProductEditingFormView },
+          { path: ':productId/price', component: PriceListView },
+          { path: ':productId/price/list', component: PriceListView }
         ]
       },
       {
@@ -54,7 +56,7 @@ const routes = [
             path: 'employee',
             children: [
               { path: '', component: EmployeeAccountView },
-              { path: 'add', component: EmployeeFormView }
+              { path: 'add', component: EmployeeAddtionFormView }
             ]
           },
           { path: 'customer', component: CustomerAccountView }

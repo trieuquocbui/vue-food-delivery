@@ -3,5 +3,7 @@ export default interface QueryModel {
   limit: number
   sortField: string
   sortOrder: string
-  search: string
+  search?: string
+  startDate?: string
+  endDate?: string
 }

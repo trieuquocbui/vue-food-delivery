@@ -233,28 +233,28 @@ onMounted(() => {
       <p>{{ message }}</p>
     </template>
     <template #content v-if="modal.data.type == 'data'">
-      <div class="account-container row">
-        <div class="account-image l-4">
-          <img :style="{ width: 100 + '%' }" :src="image" alt="Tên sản phẩm" />
+      <div class="row" style="width: 800px">
+        <div class="l-4">
+          <img style="width: 100%; height: 100%" :src="image" alt="Tên sản phẩm" />
         </div>
-        <div class="account-details l-8 row">
-          <div class="l-12 row">
+        <div class="l-8 row">
+          <div class="l-12 row align-items-center">
             <label class="l-2">Họ và tên:</label>
             <p class="l-10">{{ account.infor.fullName }}</p>
           </div>
-          <div class="l-12 row">
+          <div class="l-12 row align-items-center">
             <label class="l-2">Di động:</label>
             <p class="l-10">{{ account.infor.phoneNumber }}</p>
           </div>
-          <div class="l-12 row">
+          <div class="l-12 row align-items-center">
             <label class="l-2">Ngày sinh:</label>
             <p class="l-10">{{ formatDate(account.infor.dob!) }}</p>
           </div>
-          <div class="l-12 row">
+          <div class="l-12 row align-items-center">
             <label class="l-2">Giới tính:</label>
             <p class="l-10">{{ gender(account.infor.gender!) }}</p>
           </div>
-          <div class="l-12 row">
+          <div class="l-12 row align-items-center">
             <label class="l-2">Địa chỉ:</label>
             <p class="l-10">{{ account.infor.address }}</p>
           </div>

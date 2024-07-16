@@ -1,24 +1,148 @@
 <script setup lang="ts">
 import type PagenationModel from '@/models/PagenationModel'
-import { reactive } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import Pagenation from '../../components/Pagenation.vue'
 import Breadcrumb from '@/components/admin/Breadcrumb.vue'
 import type BreadcrumbModel from '@/models/NavModel'
+import { useRoute, useRouter } from 'vue-router'
+import { useModal } from '@/composables/ModalComposable'
+import type ProductModel from '@/models/ProductModel'
+import PagenationHelper from '@/helpers/PagenationHelper'
+import type QueryModel from '@/models/QueryModel'
+import AppHelper from '@/helpers/AppHelper'
+import type PagenationResponseModel from '@/models/PagenationResponseModel'
+import type APIResponseModel from '@/models/ApiResponseModel'
+import stores from '@/stores/Store'
+import Modal from '../common/Modal.vue'
+import { format } from 'date-fns'
 
 let breadcrumb: BreadcrumbModel[] = [
   { title: 'Trang chủ', path: '/admin/home' },
   { title: 'Danh sách sản phẩm', path: '' }
 ]
 
-let pagenation = reactive<PagenationModel>({
-  currentPageNumber: 1,
-  offset: 2,
-  totalPageNumber: 10
+const route = useRoute()
+const router = useRouter()
+const modal = useModal()
+
+const pagenation = reactive<PagenationModel<ProductModel[]>>({
+  currentPageNumber: route.query.page
+    ? Number(route.query.page)
+    : PagenationHelper.CURRENT_PAGE_NUMBER,
+  offset: route.query.limit ? Number(route.query.limit) : PagenationHelper.OFFSET,
+  totalPageNumber: 0,
+  searchQuery: route.query.search ? String(route.query.search) : PagenationHelper.SEARCH_QUERY,
+  sortField: route.query.sortField ? String(route.query.sortField) : PagenationHelper.SORT_FIELD,
+  sortOrder: route.query.sortOrder ? String(route.query.sortOrder) : PagenationHelper.SORT_ORDER,
+  data: []
 })
+
+const queries = reactive<QueryModel>({
+  page: pagenation.currentPageNumber,
+  limit: pagenation.offset,
+  search: pagenation.searchQuery,
+  sortField: pagenation.sortField,
+  sortOrder: pagenation.sortOrder
+})
+
+let image = ref<string>(AppHelper.imagePath)
+
+const message = ref<string>('')
+
+let product = reactive<ProductModel>({
+  id: '',
+  name: '',
+  description: '',
+  quantity: 0,
+  status: false,
+  featured: false,
+  price: 0,
+  categoryId: '',
+  thumbnail: ''
+})
+
+const fetchData = async () => {
+  try {
+    const result: APIResponseModel<PagenationResponseModel<ProductModel[]>> = await stores.dispatch(
+      'product/getProductList',
+      queries
+    )
+    pagenation.data = result.data?.content || []
+    pagenation.totalPageNumber = result.data?.totalPages || 0
+    pagenation.currentPageNumber = result.data?.page || pagenation.currentPageNumber
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 const selectedPage = (page: number) => {
   pagenation.currentPageNumber = page
 }
+
+const status = (value: boolean) => {
+  return value ? 'Đang kinh doanh' : 'Ngừng kinh doanh'
+}
+
+const feature = (value: boolean) => {
+  return value ? 'Đúng' : 'không'
+}
+
+const formatDate = (value: Date): string => {
+  return format(new Date(value), 'dd/MM/yyyy')
+}
+
+const selectedAcction = async (action: boolean) => {
+  modal.close()
+  if (action) {
+    try {
+      const result: APIResponseModel<string> = await stores.dispatch(
+        'product/deleteProduct',
+        product.id
+      )
+      modal.open('Thông báo', false, undefined, 'message')
+      message.value = result.message
+      pagenation.data = pagenation.data.filter((data) => data.id !== result.data)
+    } catch (error: any) {
+      modal.open('Thông báo', false, undefined, 'message')
+      message.value = error.message
+    }
+  }
+}
+
+const showModal = (value: ProductModel, action: string) => {
+  product = value
+  if (action == 'get') {
+    modal.open('Thông tin sản phẩm', false, undefined, 'data')
+  } else {
+    modal.open('Thông báo', true, undefined, 'message')
+    message.value = 'Bạn chắc chắn muốn xoá sản phẩm này!'
+  }
+}
+
+const redirectPage = (url: string) => {
+  router.push(url)
+}
+
+watch(
+  () => ({
+    currentPageNumber: pagenation.currentPageNumber,
+    searchQuery: pagenation.searchQuery
+  }),
+  async (newPagenation, oldPagenation) => {
+    if (
+      newPagenation.currentPageNumber !== oldPagenation.currentPageNumber ||
+      newPagenation.searchQuery !== oldPagenation.searchQuery
+    ) {
+      queries.page = pagenation.currentPageNumber
+      queries.search = pagenation.searchQuery
+      await fetchData()
+    }
+  }
+)
+
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <template>
@@ -42,7 +166,12 @@ const selectedPage = (page: number) => {
       </div>
       <form class="form" action="">
         <div class="form-group">
-          <input class="form-group-input" type="search" placeholder="Tìm kiếm..." />
+          <input
+            class="form-group-input"
+            type="search"
+            v-model="pagenation.searchQuery"
+            placeholder="Tìm kiếm..."
+          />
         </div>
       </form>
     </div>
@@ -50,50 +179,58 @@ const selectedPage = (page: number) => {
       <div class="container-list">
         <div class="container-heading-list row">
           <div class="l-1">Hình ảnh</div>
-          <div class="l-1">Mã</div>
-          <div class="l-3">Tên</div>
-          <div class="l-1">Giá</div>
-          <div class="l-1">Số lượng</div>
-          <div class="l-1">Đã bán</div>
-          <div class="l-1">Trạng thái</div>
-          <div class="l-1">Nổi bật</div>
+          <div class="l-1">Mã số</div>
+          <div class="l-2">Tên món</div>
+          <div class="l-2">Giá (VND)</div>
+          <div class="l-2">Số lượng (Phần)</div>
+          <div class="l-2">Đã bán</div>
           <div class="l-2">Thao tác</div>
         </div>
         <div class="container-content-list">
-          <div class="container-content-item">
+          <div class="container-content-item" v-for="product in pagenation.data">
             <div class="l-1">
-              <img src="../../assets/images/th.jpg" alt="" class="image" />
+              <img :src="image + product.thumbnail" alt="" class="image" />
             </div>
-            <div class="l-1">ABCD</div>
-            <div class="l-3">Cơm tấm sườn bì chả</div>
-            <div class="l-1">50.000</div>
-            <div class="l-1">1000</div>
-            <div class="l-1">500</div>
-            <div class="l-1">Kinh doanh</div>
-            <div class="l-1">Nổi bật</div>
+            <div class="l-1">{{ product.id }}</div>
+            <div class="l-2">{{ product.name }}</div>
+            <div class="l-2">{{ product.price }}</div>
+            <div class="l-2">{{ product.quantity }}</div>
+            <div class="l-2">{{ product.sold }}</div>
             <div class="l-2">
               <div class="operation row-offset-4-wrap">
                 <div class="col-offset-4 l-3">
-                  <button class="btn-operation btn-infor" title="Thông tin">
+                  <button
+                    class="btn-operation btn-infor"
+                    title="Thông tin"
+                    @click="showModal(product, 'get')"
+                  >
                     <font-awesome-icon :icon="['fas', 'info']" />
                   </button>
                 </div>
                 <div class="col-offset-4 l-3">
-                  <routerLink
-                    :to="'/admin/product/id/price'"
+                  <button
                     class="btn-operation btn-add"
                     title="Danh sách giá"
+                    @click="redirectPage(`/admin/product/${product.id}/price/list`)"
                   >
                     <font-awesome-icon :icon="['fas', 'money-check-dollar']" />
-                  </routerLink>
+                  </button>
                 </div>
                 <div class="col-offset-4 l-3">
-                  <button class="btn-operation btn-update" title="Cho nhân viên nghỉ">
+                  <button
+                    class="btn-operation btn-update"
+                    title="Chỉnh sửa sản phẩm"
+                    @click="redirectPage(`/admin/product/${product.id}/edit`)"
+                  >
                     <font-awesome-icon :icon="['fas', 'pen']" />
                   </button>
                 </div>
                 <div class="col-offset-4 l-3">
-                  <button class="btn-operation btn-remove" title="Cho nhân viên nghỉ">
+                  <button
+                    class="btn-operation btn-remove"
+                    title="Xoá sản phẩm"
+                    @click="showModal(product, 'remove')"
+                  >
                     <font-awesome-icon :icon="['fas', 'trash']" />
                   </button>
                 </div>
@@ -105,6 +242,70 @@ const selectedPage = (page: number) => {
     </div>
     <Pagenation v-bind="pagenation" @selected-page="selectedPage"></Pagenation>
   </div>
+  <Modal v-bind="modal.data" @selected-acction="selectedAcction">
+    <template #content v-if="modal.data.type == 'message'">
+      <p>{{ message }}</p>
+    </template>
+    <template #content v-if="modal.data.type == 'data'">
+      <div class="row row-offset-8" style="width: 1000px">
+        <div class="l-3 col-offset-8">
+          <img
+            style="width: 100%; height: 100%"
+            :src="image + product.thumbnail"
+            alt="Tên sản phẩm"
+          />
+        </div>
+        <div class="l-9 col-offset-8 row">
+          <div class="l-12 row align-items-center">
+            <div class="row l-12">
+              <div class="l-6 row">
+                <label class="l-4">Mã số:</label>
+                <p class="l-8">{{ product.id }}</p>
+              </div>
+              <div class="l-6 row">
+                <label class="l-4">Tên món:</label>
+                <p class="l-8">{{ product.name }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="l-12 row align-items-center">
+            <div class="row l-12">
+              <div class="l-6 row">
+                <label class="l-4">Giá (VND):</label>
+                <p class="l-8">{{ product.price }}</p>
+              </div>
+              <div class="l-6 row">
+                <label class="l-4">Ngày áp dụng giá :</label>
+                <p class="l-8">{{ formatDate(product.appliedAt!) }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="l-12 row align-items-center">
+            <div class="row l-12">
+              <div class="l-6 row">
+                <label class="l-4">Số lượng (Phần):</label>
+                <p class="l-8">{{ product.quantity }}</p>
+              </div>
+              <div class="l-6 row">
+                <label class="l-4">Đã bán (Phần):</label>
+                <p class="l-8">{{ product.sold }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="l-12 row align-items-center">
+            <div class="l-6 row">
+              <label class="l-4">Trạng thái :</label>
+              <p class="l-8">{{ status(product.status) }}</p>
+            </div>
+            <div class="l-6 row">
+              <label class="l-4">Sản phẩm nổi bật :</label>
+              <p class="l-8">{{ feature(product.featured) }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+  </Modal>
 </template>
 
 <style scoped>

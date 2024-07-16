@@ -45,6 +45,18 @@
   padding-right: 8px;
 }
 
+.row-offset-4 {
+  display: flex;
+  flex-wrap: nowrap;
+  margin-left: -4px;
+  margin-right: -4px;
+}
+
+.col-offset-4 {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
 .row-offset-20 {
   display: flex;
   flex-wrap: wrap;
@@ -55,6 +67,18 @@
 .col-offset-20 {
   padding-left: 20px;
   padding-right: 20px;
+}
+
+.row-offset-10 {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
+.col-offset-10 {
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .row-offset-8-4 {
@@ -164,4 +188,8 @@
 .l-12 {
   flex: 0 0 100%;
   max-width: 100%;
+}
+
+.align-items-center {
+  align-items: center;
 }

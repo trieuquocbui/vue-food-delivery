@@ -3,7 +3,6 @@ import APIClient from './APIClient'
 import type QueryModel from '../models/QueryModel'
 import type AccountModel from '@/models/AccountInforModel'
 import type PagenationResponseModel from '@/models/PagenationResponseModel'
-import type AccountStatus from '@/helpers/AccountStatus'
 
 const getAccountList = (
   pagenationInfor: QueryModel,

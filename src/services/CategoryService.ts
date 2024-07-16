@@ -77,4 +77,23 @@ const deleteCategory = (id: string): Promise<ApiResponseModel<string>> => {
   })
 }
 
-export { getCategoryList, createCategory, updateCategory, deleteCategory, getCategory }
+const getAllCategory = (): Promise<ApiResponseModel<CategoryModel[]>> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let result =
+        await APIClient.get<ApiResponseModel<CategoryModel[]>>(`/management/category/all`)
+      resolve(result.data)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+export {
+  getCategoryList,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  getCategory,
+  getAllCategory
+}

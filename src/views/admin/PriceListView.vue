@@ -1,15 +1,26 @@
 <script setup lang="ts">
 import type PagenationModel from '@/models/PagenationModel'
-import { reactive } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import Pagenation from '../../components/Pagenation.vue'
 import Breadcrumb from '@/components/admin/Breadcrumb.vue'
 import type BreadcrumbModel from '@/models/NavModel'
 import { useRoute } from 'vue-router'
-import PriceFormView from '../../views/admin/PriceFormView.vue'
+import PriceFormView from '../../components/admin/PriceForm.vue'
+import type QueryModel from '@/models/QueryModel'
+import PagenationHelper from '@/helpers/PagenationHelper'
+import PriceModel from '@/models/PriceModel'
+import APIResponseModel from '@/models/ApiResponseModel'
+import type PagenationResponseModel from '@/models/PagenationResponseModel'
+import stores from '@/stores/Store'
+import { format } from 'date-fns'
+import CodeHelper from '@/helpers/CodeHelper'
+import { useModal } from '@/composables/ModalComposable'
+import Modal from '../common/Modal.vue'
 
 const route = useRoute()
+const modal = useModal()
 
-const productId = route.params.id
+const productId = String(route.params.productId)
 
 let breadcrumb: BreadcrumbModel[] = [
   { title: 'Trang chủ', path: '/admin/home' },
@@ -17,15 +28,150 @@ let breadcrumb: BreadcrumbModel[] = [
   { title: 'Danh sách giá', path: '' }
 ]
 
-let pagenation = reactive<PagenationModel>({
-  currentPageNumber: 1,
-  offset: 2,
-  totalPageNumber: 10
+const pagenation = reactive<PagenationModel<PriceModel[]>>({
+  currentPageNumber: route.query.page
+    ? Number(route.query.page)
+    : PagenationHelper.CURRENT_PAGE_NUMBER,
+  offset: route.query.limit ? Number(route.query.limit) : PagenationHelper.OFFSET,
+  totalPageNumber: 0,
+  searchQuery: route.query.search ? String(route.query.search) : PagenationHelper.SEARCH_QUERY,
+  sortField: route.query.sortField ? String(route.query.sortField) : 'appliedAt',
+  sortOrder: route.query.sortOrder ? String(route.query.sortOrder) : PagenationHelper.SORT_ORDER,
+  startDate: route.query.startDate ? String(route.query.sortOrder) : undefined,
+  endDate: route.query.startDate ? String(route.query.sortOrder) : undefined,
+  data: []
 })
+
+const queries = reactive<QueryModel>({
+  page: pagenation.currentPageNumber,
+  limit: pagenation.offset,
+  sortField: pagenation.sortField,
+  sortOrder: pagenation.sortOrder,
+  startDate: pagenation.startDate,
+  endDate: pagenation.endDate
+})
+
+let price = reactive<PriceModel>(new PriceModel())
+
+const message = ref<string>('')
+
+const fetchData = async () => {
+  try {
+    const result: APIResponseModel<PagenationResponseModel<PriceModel[]>> = await stores.dispatch(
+      'product/getPriceList',
+      {
+        productId: productId,
+        pagenationInfor: queries
+      }
+    )
+    pagenation.data = result.data?.content || []
+    pagenation.totalPageNumber = result.data?.totalPages || 0
+    pagenation.currentPageNumber = result.data?.page || pagenation.currentPageNumber
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const errors = reactive<{ startDate: string; endDate: string }>({
+  startDate: '',
+  endDate: ''
+})
+
+const validate = () => {
+  errors.startDate = pagenation.startDate ? '' : 'Trường này cần nhập'
+  errors.endDate = pagenation.endDate ? '' : 'Trường này cần nhập'
+  return !errors.startDate && !errors.endDate
+}
+
+const hideError = (field: string) => {
+  if (field == 'startDate' && errors.startDate != '') {
+    errors.startDate = ''
+  } else if (field == 'endDate' && errors.endDate != '') {
+    errors.endDate = ''
+  }
+}
 
 const selectedPage = (page: number) => {
   pagenation.currentPageNumber = page
 }
+
+const formatDate = (value: Date): string => {
+  return format(new Date(value), 'dd/MM/yyyy')
+}
+
+const showModal = (value: PriceModel) => {
+  price = value
+  modal.open('Thông báo', true, undefined, 'message')
+  message.value = 'Bạn chắc chắn muốn xoá giá này!'
+}
+
+const selectedAcction = async (action: boolean) => {
+  modal.close()
+  if (action) {
+    try {
+      const result: APIResponseModel<string> = await stores.dispatch('product/deletePrice', {
+        productId: productId,
+        priceId: price.id
+      })
+      modal.open('Thông báo', false, undefined, 'message')
+      message.value = result.message
+      await fetchData()
+    } catch (error: any) {
+      modal.open('Thông báo', false, undefined, 'message')
+      message.value = error.message
+    }
+  }
+}
+
+const created = async (newPrice: PriceModel) => {
+  newPrice.productId = productId
+  try {
+    let result: APIResponseModel<PriceModel> = await stores.dispatch(
+      'product/createPrice',
+      newPrice
+    )
+
+    if (result.code == CodeHelper.SUCCESS && result.data) {
+      message.value = result.message
+      modal.open('Thông báo', false, undefined, 'message')
+      if (pagenation.data.length == queries.limit) {
+        pagenation.data.unshift(result.data!)
+        pagenation.data.pop()
+      } else {
+        pagenation.data.unshift(result.data!)
+      }
+    }
+  } catch (error) {}
+}
+
+const submit = async () => {
+  if (validate()) {
+    queries.endDate = pagenation.endDate
+    queries.startDate = pagenation.startDate
+    await fetchData()
+  }
+}
+
+watch(
+  () => ({
+    currentPageNumber: pagenation.currentPageNumber,
+    searchQuery: pagenation.searchQuery
+  }),
+  async (newPagenation, oldPagenation) => {
+    if (
+      newPagenation.currentPageNumber !== oldPagenation.currentPageNumber ||
+      newPagenation.searchQuery !== oldPagenation.searchQuery
+    ) {
+      queries.page = pagenation.currentPageNumber
+      queries.search = pagenation.searchQuery
+      await fetchData()
+    }
+  }
+)
+
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <template>
@@ -33,45 +179,87 @@ const selectedPage = (page: number) => {
   <div class="content-heading mb-10">
     <h2>Danh sách giá</h2>
   </div>
-  <div class="row">
-    <div class="content-main l-9">
-      <div class="content-main-header">
-        <form class="form" action="">
-          <div class="form-group">
-            <input class="form-group-input" type="search" placeholder="Tìm kiếm..." />
-          </div>
-        </form>
-      </div>
-      <div class="content-main-list">
-        <div class="container-list">
-          <div class="container-heading-list row">
-            <div class="l-3">Mã số</div>
-            <div class="l-3">Giá</div>
-            <div class="l-2">Ngày tạo</div>
-            <div class="l-2">Ngày áp dụng</div>
-            <div class="l-2">Thao tác</div>
-          </div>
-          <div class="container-content-list">
-            <div class="container-content-item">
-              <div class="l-3">667d85221d389b1107af6c43</div>
-              <div class="l-3">50.000</div>
-              <div class="l-2">7/7/2024</div>
-              <div class="l-2">19/7/2024</div>
-              <div class="l-2">
-                <div class="operation row-offset-4-wrap">
-                  <div class="col-offset-4 l-3">
-                    <button class="btn-operation btn-remove" title="Cho nhân viên nghỉ">
-                      <font-awesome-icon :icon="['fas', 'trash']" />
-                    </button>
+  <div class="row-offset-4">
+    <div class="col-offset-4 l-9">
+      <div class="content-main">
+        <div class="content-main-header" style="font-size: 1em">
+          <form class="form row-offset-4 l-12" action="" @submit.prevent="submit">
+            <div class="form-group col-offset-4 l-5">
+              <label class="form-group-label" for="username">Từ ngày</label>
+              <input
+                :class="{ 'input-error': errors.startDate }"
+                @focus="hideError('startDate')"
+                v-model="pagenation.startDate"
+                class="form-group-input"
+                type="date"
+              />
+              <span class="form-group-error">
+                <span>{{ errors.startDate }}</span>
+              </span>
+            </div>
+            <div class="form-group col-offset-4 l-5">
+              <label class="form-group-label" for="username">Tới ngày</label>
+              <input
+                :class="{ 'input-error': errors.endDate }"
+                @focus="hideError('endDate')"
+                v-model="pagenation.endDate"
+                class="form-group-input"
+                type="date"
+              />
+              <span class="form-group-error">
+                <span>{{ errors.endDate }}</span>
+              </span>
+            </div>
+            <div class="form-group col-offset-4 l-2">
+              <label class="form-group-label" for="username">Tra cứu</label>
+              <div class="form-group col-offset-4 l-12">
+                <button class="form-group-btn" type="submit">Tra cứu</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="content-main-list">
+          <div class="container-list">
+            <div class="container-heading-list row">
+              <div class="l-3">Mã số</div>
+              <div class="l-3">Giá (VND)</div>
+              <div class="l-2">Ngày tạo</div>
+              <div class="l-2">Ngày áp dụng</div>
+              <div class="l-2">Thao tác</div>
+            </div>
+            <div class="container-content-list">
+              <div class="container-content-item" v-for="price in pagenation.data">
+                <div class="l-3">{{ price.id }}</div>
+                <div class="l-3">{{ price.newPrice }}</div>
+                <div class="l-2">{{ formatDate(price.createdAt!) }}</div>
+                <div class="l-2">{{ formatDate(price.appliedAt!) }}</div>
+                <div class="l-2">
+                  <div class="operation row-offset-4-wrap">
+                    <div class="col-offset-4 l-3">
+                      <button
+                        class="btn-operation btn-remove"
+                        title="Xoá giá này"
+                        @click="showModal(price)"
+                      >
+                        <font-awesome-icon :icon="['fas', 'trash']" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <Pagenation v-bind="pagenation" @selected-page="selectedPage"></Pagenation>
       </div>
-      <Pagenation v-bind="pagenation" @selected-page="selectedPage"></Pagenation>
     </div>
-    <PriceFormView class="l-3"></PriceFormView>
+    <div class="col-offset-4 l-3">
+      <PriceFormView @created="created"></PriceFormView>
+    </div>
   </div>
+  <Modal v-bind="modal.data" @selected-acction="selectedAcction">
+    <template #content v-if="modal.data.type == 'message'">
+      <p>{{ message }}</p>
+    </template>
+  </Modal>
 </template>

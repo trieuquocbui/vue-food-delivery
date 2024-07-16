@@ -5,6 +5,7 @@ import type QueryModel from '@/models/QueryModel'
 import {
   createCategory,
   deleteCategory,
+  getAllCategory,
   getCategory,
   getCategoryList,
   updateCategory
@@ -84,6 +85,17 @@ const AccountStore = {
       return new Promise(async (resolve, reject) => {
         try {
           let result: ApiResponseModel<CategoryModel> = await getCategory(id)
+          resolve(result)
+        } catch (error) {
+          reject(error)
+        }
+      })
+    },
+
+    getAll({ commit }: any): Promise<ApiResponseModel<CategoryModel[]>> {
+      return new Promise(async (resolve, reject) => {
+        try {
+          let result: ApiResponseModel<CategoryModel[]> = await getAllCategory()
           resolve(result)
         } catch (error) {
           reject(error)
