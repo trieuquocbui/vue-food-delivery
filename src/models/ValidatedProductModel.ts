@@ -1,5 +1,4 @@
 export default class ValidatedProductModel {
-  id?: string
   name!: string
   description!: string
   quantity!: string

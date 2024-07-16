@@ -66,7 +66,7 @@ const routes = [
         path: 'order',
         component: OrdertView,
         redirect: '/admin/order/waite',
-        children: [{ path: ':orderStatus', component: OrderListView }]
+        children: [{ path: ':orderStatus', component: OrderListView}]
       }
     ]
   },

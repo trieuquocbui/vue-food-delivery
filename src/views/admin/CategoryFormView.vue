@@ -28,7 +28,7 @@ if (route.params.categoryId) {
 const message = ref<string>('')
 
 let category = reactive<CategoryModel>({
-  id: '',
+  _id: '',
   name: '',
   thumbnail: '',
   status: true
@@ -41,7 +41,7 @@ const action = async (action: string, formData: FormData) => {
     let result: ApiResponseModel<CategoryModel>
     if (action == 'update') {
       result = await stores.dispatch('category/updateCategory', {
-        id: category.id,
+        id: category._id,
         formData: formData
       })
     } else {
@@ -50,13 +50,11 @@ const action = async (action: string, formData: FormData) => {
     message.value = result.message
     modal.open('Thông báo', false, undefined, 'message')
   } catch (error: any) {
-    if (error.code == CodeHelper.ERROR_ID_EXIST) {
-      errors.id = error.message
-    } else if (error.code == CodeHelper.ERROR_NAME_EXIST) {
+    if (error.code == CodeHelper.ERROR_NAME_EXIST) {
       errors.name = error.message
     }
     let data: CategoryModel = JSON.parse(formData.get('data') as string) as CategoryModel
-    category.id = data.id
+    category._id = data._id
     category.name = data.name
     category.thumbnail = data.thumbnail
     category.status = data.status
@@ -75,7 +73,7 @@ onMounted(async () => {
       categoryId
     )
     if (result.data && result.code == CodeHelper.SUCCESS) {
-      category.id = result.data.id
+      category._id = result.data._id
       category.name = result.data.name
       category.thumbnail = result.data.thumbnail
       category.status = result.data.status

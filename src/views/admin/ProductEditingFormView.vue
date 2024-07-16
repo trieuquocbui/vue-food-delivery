@@ -24,7 +24,7 @@ const modal = useModal()
 const route = useRoute()
 
 const product = reactive<ProductModel>({
-  id: '',
+  _id: '',
   categoryId: '',
   name: '',
   description: '',
@@ -72,7 +72,7 @@ const handleFileChange = (event: Event) => {
 }
 
 const validate = () => {
-  errors.id = product.id ? '' : 'Trường này cần nhập'
+  errors.id = product._id ? '' : 'Trường này cần nhập'
   errors.name = product.name ? '' : 'Trường này cần nhập'
   errors.quantity = product.quantity ? '' : 'Trường này cần nhập'
   errors.categoryId = product.categoryId ? '' : 'Trường này cần nhập'
@@ -92,7 +92,7 @@ const submit = async () => {
       }
       formData.append('data', JSON.stringify(product))
       let result: APIResponseModel<ProductModel> = await stores.dispatch('product/updateProduct', {
-        productId: product.id,
+        productId: product._id,
         formData: formData
       })
       message.value = result.message
@@ -160,7 +160,7 @@ onMounted(() => {
             <input
               :class="{ 'input-error': errors.id }"
               @focus="hideError('id')"
-              v-model="product.id"
+              v-model="product._id"
               class="form-group-input"
               type="text"
               placeholder="Nhập mã"
@@ -208,7 +208,7 @@ onMounted(() => {
               v-model="product.categoryId"
             >
               <option :value="''" disabled selected>Lựa chọn danh mục</option>
-              <option :value="category.id" v-for="category in categoryList">
+              <option :value="category._id" v-for="category in categoryList">
                 {{ category.name }}
               </option>
             </select>

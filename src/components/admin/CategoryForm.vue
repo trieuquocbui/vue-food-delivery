@@ -43,9 +43,7 @@ watch(
 )
 
 const hideError = (field: string) => {
-  if (field == 'id' && errors.id != '') {
-    errors.id = ''
-  } else if (field == 'name' && errors.name != '') {
+  if (field == 'name' && errors.name != '') {
     errors.name = ''
   } else if (field == 'thumbnail' && errors.thumbnail != '' && category.thumbnail != '') {
     errors.thumbnail = ''
@@ -63,7 +61,6 @@ const handleFileChange = (event: Event) => {
 
 const validate = () => {
   errors.thumbnail = image.value ? '' : 'Trường này cần nhập'
-  errors.id = category.id ? '' : 'Trường này cần nhập'
   errors.name = category.name ? '' : 'Trường này cần nhập'
   return !errors.thumbnail && !errors.thumbnail && !errors.name
 }
@@ -110,29 +107,7 @@ const submit = async () => {
     <div class="col-offset-4 l-8">
       <div class="row l-12">
         <div class="form-group col-offset-4 l-12">
-          <label class="form-group-label" for="username"
-            ><font-awesome-icon class="form-group-icon" :icon="['fas', 'user']" /> Mã danh
-            mục</label
-          >
-          <input
-            id="id"
-            class="form-group-input"
-            type="text"
-            placeholder="Nhập mã danh mục"
-            :class="{ 'input-error': errors.id }"
-            @focus="hideError('id')"
-            v-model="category.id"
-            :disabled="action != 'create'"
-          />
-          <span class="form-group-error">
-            <span>{{ errors.id }}</span>
-          </span>
-        </div>
-        <div class="form-group col-offset-4 l-12">
-          <label class="form-group-label" for=""
-            ><font-awesome-icon class="form-group-icon" :icon="['fas', 'user']" /> Tên danh
-            mục</label
-          >
+          <label class="form-group-label" for=""> Tên danh mục</label>
           <input
             id="username"
             class="form-group-input"

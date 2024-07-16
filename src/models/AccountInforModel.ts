@@ -14,3 +14,5 @@ export default class AccountModel {
   status?: number
   infor: InforModel = new InforModel()
 }
+
+export { InforModel }

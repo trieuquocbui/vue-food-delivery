@@ -16,6 +16,7 @@ import { format } from 'date-fns'
 import CodeHelper from '@/helpers/CodeHelper'
 import { useModal } from '@/composables/ModalComposable'
 import Modal from '../common/Modal.vue'
+import DateSearchtingForm from '@/components/DateSearchtingForm.vue'
 
 const route = useRoute()
 const modal = useModal()
@@ -37,8 +38,8 @@ const pagenation = reactive<PagenationModel<PriceModel[]>>({
   searchQuery: route.query.search ? String(route.query.search) : PagenationHelper.SEARCH_QUERY,
   sortField: route.query.sortField ? String(route.query.sortField) : 'appliedAt',
   sortOrder: route.query.sortOrder ? String(route.query.sortOrder) : PagenationHelper.SORT_ORDER,
-  startDate: route.query.startDate ? String(route.query.sortOrder) : undefined,
-  endDate: route.query.startDate ? String(route.query.sortOrder) : undefined,
+  startDate: route.query.startDate ? String(route.query.sortOrder) : '',
+  endDate: route.query.startDate ? String(route.query.sortOrder) : '',
   data: []
 })
 
@@ -72,25 +73,6 @@ const fetchData = async () => {
   }
 }
 
-const errors = reactive<{ startDate: string; endDate: string }>({
-  startDate: '',
-  endDate: ''
-})
-
-const validate = () => {
-  errors.startDate = pagenation.startDate ? '' : 'Trường này cần nhập'
-  errors.endDate = pagenation.endDate ? '' : 'Trường này cần nhập'
-  return !errors.startDate && !errors.endDate
-}
-
-const hideError = (field: string) => {
-  if (field == 'startDate' && errors.startDate != '') {
-    errors.startDate = ''
-  } else if (field == 'endDate' && errors.endDate != '') {
-    errors.endDate = ''
-  }
-}
-
 const selectedPage = (page: number) => {
   pagenation.currentPageNumber = page
 }
@@ -111,7 +93,7 @@ const selectedAcction = async (action: boolean) => {
     try {
       const result: APIResponseModel<string> = await stores.dispatch('product/deletePrice', {
         productId: productId,
-        priceId: price.id
+        priceId: price._id
       })
       modal.open('Thông báo', false, undefined, 'message')
       message.value = result.message
@@ -144,12 +126,12 @@ const created = async (newPrice: PriceModel) => {
   } catch (error) {}
 }
 
-const submit = async () => {
-  if (validate()) {
-    queries.endDate = pagenation.endDate
-    queries.startDate = pagenation.startDate
-    await fetchData()
-  }
+const searched = async (value: { startDate: string; endDate: string }) => {
+  pagenation.endDate = value.endDate
+  pagenation.startDate = value.startDate
+  queries.endDate = pagenation.endDate
+  queries.startDate = pagenation.startDate
+  await fetchData()
 }
 
 watch(
@@ -183,40 +165,11 @@ onMounted(() => {
     <div class="col-offset-4 l-9">
       <div class="content-main">
         <div class="content-main-header" style="font-size: 1em">
-          <form class="form row-offset-4 l-12" action="" @submit.prevent="submit">
-            <div class="form-group col-offset-4 l-5">
-              <label class="form-group-label" for="username">Từ ngày</label>
-              <input
-                :class="{ 'input-error': errors.startDate }"
-                @focus="hideError('startDate')"
-                v-model="pagenation.startDate"
-                class="form-group-input"
-                type="date"
-              />
-              <span class="form-group-error">
-                <span>{{ errors.startDate }}</span>
-              </span>
-            </div>
-            <div class="form-group col-offset-4 l-5">
-              <label class="form-group-label" for="username">Tới ngày</label>
-              <input
-                :class="{ 'input-error': errors.endDate }"
-                @focus="hideError('endDate')"
-                v-model="pagenation.endDate"
-                class="form-group-input"
-                type="date"
-              />
-              <span class="form-group-error">
-                <span>{{ errors.endDate }}</span>
-              </span>
-            </div>
-            <div class="form-group col-offset-4 l-2">
-              <label class="form-group-label" for="username">Tra cứu</label>
-              <div class="form-group col-offset-4 l-12">
-                <button class="form-group-btn" type="submit">Tra cứu</button>
-              </div>
-            </div>
-          </form>
+          <DateSearchtingForm
+            :start-date="pagenation.startDate!"
+            :end-date="pagenation.endDate!"
+            @searched="searched"
+          ></DateSearchtingForm>
         </div>
         <div class="content-main-list">
           <div class="container-list">
@@ -229,7 +182,7 @@ onMounted(() => {
             </div>
             <div class="container-content-list">
               <div class="container-content-item" v-for="price in pagenation.data">
-                <div class="l-3">{{ price.id }}</div>
+                <div class="l-3">{{ price._id }}</div>
                 <div class="l-3">{{ price.newPrice }}</div>
                 <div class="l-2">{{ formatDate(price.createdAt!) }}</div>
                 <div class="l-2">{{ formatDate(price.appliedAt!) }}</div>

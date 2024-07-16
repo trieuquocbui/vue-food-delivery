@@ -22,7 +22,7 @@ let breadcrumb: NavModel[] = [
 const modal = useModal()
 
 const product = reactive<ProductModel>({
-  id: '',
+  _id: '',
   categoryId: '',
   name: '',
   description: '',
@@ -49,9 +49,7 @@ let status: StatusModel[] = [
 ]
 
 const hideError = (field: string) => {
-  if (field == 'id' && errors.id != '') {
-    errors.id = ''
-  } else if (field == 'name' && errors.name != '') {
+  if (field == 'name' && errors.name != '') {
     errors.name = ''
   } else if (field == 'price' && errors.price != undefined) {
     errors.price = ''
@@ -75,19 +73,11 @@ const handleFileChange = (event: Event) => {
 
 const validate = () => {
   errors.file = image.value ? '' : 'Trường này cần nhập'
-  errors.id = product.id ? '' : 'Trường này cần nhập'
   errors.name = product.name ? '' : 'Trường này cần nhập'
   errors.price = product.price ? '' : 'Trường này cần nhập'
   errors.quantity = product.quantity ? '' : 'Trường này cần nhập'
   errors.categoryId = product.categoryId ? '' : 'Trường này cần nhập'
-  return (
-    !errors.id &&
-    !errors.file &&
-    !errors.name &&
-    !errors.quantity &&
-    !errors.price &&
-    !errors.categoryId
-  )
+  return !errors.file && !errors.name && !errors.quantity && !errors.price && !errors.categoryId
 }
 
 const selectedAcction = () => {
@@ -107,11 +97,7 @@ const submit = async () => {
       console.log(result)
       message.value = result.message
       modal.open('Thông báo', false, undefined, 'message')
-    } catch (error: any) {
-      if (error.code == CodeHelper.ERROR_ID_EXIST) {
-        errors.id = error.message
-      }
-    }
+    } catch (error: any) {}
   }
 }
 
@@ -158,20 +144,6 @@ onMounted(() => {
       </div>
       <div class="col-offset-4 l-8">
         <div class="row l-12">
-          <div class="form-group col-offset-4 l-6">
-            <label class="form-group-label" for="username"> Mã sản phẩm</label>
-            <input
-              :class="{ 'input-error': errors.id }"
-              @focus="hideError('id')"
-              v-model="product.id"
-              class="form-group-input"
-              type="text"
-              placeholder="Nhập mã"
-            />
-            <span class="form-group-error">
-              <span>{{ errors.id }}</span>
-            </span>
-          </div>
           <div class="form-group col-offset-4 l-6">
             <label class="form-group-label" for=""> Tên sản phẩm</label>
             <input
@@ -225,7 +197,7 @@ onMounted(() => {
               v-model="product.categoryId"
             >
               <option :value="''" disabled selected>Lựa chọn danh mục</option>
-              <option :value="category.id" v-for="category in categoryList">
+              <option :value="category._id" v-for="category in categoryList">
                 {{ category.name }}
               </option>
             </select>

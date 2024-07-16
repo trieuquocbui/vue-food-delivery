@@ -50,7 +50,7 @@ let image = ref<string>(AppHelper.imagePath)
 const message = ref<string>('')
 
 let product = reactive<ProductModel>({
-  id: '',
+  _id: '',
   name: '',
   description: '',
   quantity: 0,
@@ -97,11 +97,11 @@ const selectedAcction = async (action: boolean) => {
     try {
       const result: APIResponseModel<string> = await stores.dispatch(
         'product/deleteProduct',
-        product.id
+        product._id
       )
       modal.open('Thông báo', false, undefined, 'message')
       message.value = result.message
-      pagenation.data = pagenation.data.filter((data) => data.id !== result.data)
+      pagenation.data = pagenation.data.filter((data) => data._id !== result.data)
     } catch (error: any) {
       modal.open('Thông báo', false, undefined, 'message')
       message.value = error.message
@@ -179,11 +179,11 @@ onMounted(() => {
       <div class="container-list">
         <div class="container-heading-list row">
           <div class="l-1">Hình ảnh</div>
-          <div class="l-1">Mã số</div>
-          <div class="l-2">Tên món</div>
-          <div class="l-2">Giá (VND)</div>
-          <div class="l-2">Số lượng (Phần)</div>
-          <div class="l-2">Đã bán</div>
+          <div class="l-3">Mã số</div>
+          <div class="l-3">Tên món</div>
+          <div class="l-1">Giá (VND)</div>
+          <div class="l-1">Số lượng</div>
+          <div class="l-1">Đã bán</div>
           <div class="l-2">Thao tác</div>
         </div>
         <div class="container-content-list">
@@ -191,11 +191,11 @@ onMounted(() => {
             <div class="l-1">
               <img :src="image + product.thumbnail" alt="" class="image" />
             </div>
-            <div class="l-1">{{ product.id }}</div>
-            <div class="l-2">{{ product.name }}</div>
-            <div class="l-2">{{ product.price }}</div>
-            <div class="l-2">{{ product.quantity }}</div>
-            <div class="l-2">{{ product.sold }}</div>
+            <div class="l-3">{{ product._id }}</div>
+            <div class="l-3">{{ product.name }}</div>
+            <div class="l-1">{{ product.price }}</div>
+            <div class="l-1">{{ product.quantity }}</div>
+            <div class="l-1">{{ product.sold }}</div>
             <div class="l-2">
               <div class="operation row-offset-4-wrap">
                 <div class="col-offset-4 l-3">
@@ -211,7 +211,7 @@ onMounted(() => {
                   <button
                     class="btn-operation btn-add"
                     title="Danh sách giá"
-                    @click="redirectPage(`/admin/product/${product.id}/price/list`)"
+                    @click="redirectPage(`/admin/product/${product._id}/price/list`)"
                   >
                     <font-awesome-icon :icon="['fas', 'money-check-dollar']" />
                   </button>
@@ -220,7 +220,7 @@ onMounted(() => {
                   <button
                     class="btn-operation btn-update"
                     title="Chỉnh sửa sản phẩm"
-                    @click="redirectPage(`/admin/product/${product.id}/edit`)"
+                    @click="redirectPage(`/admin/product/${product._id}/edit`)"
                   >
                     <font-awesome-icon :icon="['fas', 'pen']" />
                   </button>
@@ -260,7 +260,7 @@ onMounted(() => {
             <div class="row l-12">
               <div class="l-6 row">
                 <label class="l-4">Mã số:</label>
-                <p class="l-8">{{ product.id }}</p>
+                <p class="l-8">{{ product._id }}</p>
               </div>
               <div class="l-6 row">
                 <label class="l-4">Tên món:</label>

@@ -49,7 +49,7 @@ const message = ref<string>('')
 let path = ref<string>(AppHelper.imagePath)
 
 let category = reactive<CategoryModel>({
-  id: '',
+  _id: '',
   name: '',
   thumbnail: '',
   status: false
@@ -81,11 +81,11 @@ const selectedAcction = async (action: boolean) => {
     try {
       const result: APIResponseModel<string> = await stores.dispatch(
         'category/deleteCategory',
-        category.id
+        category._id
       )
       modal.open('Thông báo', false, undefined, 'message')
       message.value = result.message
-      pagenation.data = pagenation.data.filter((data) => data.id !== result.data)
+      fetchData()
     } catch (error: any) {
       modal.open('Thông báo', false, undefined, 'message')
       message.value = error.message
@@ -169,7 +169,7 @@ onMounted(() => {
             <div class="l-2">
               <img :src="path + category.thumbnail" alt="" class="image" />
             </div>
-            <div class="l-3">{{ category.id }}</div>
+            <div class="l-3">{{ category._id }}</div>
             <div class="l-3">{{ category.name }}</div>
             <div class="l-2">{{ status(category.status) }}</div>
             <div class="l-2">
@@ -177,8 +177,8 @@ onMounted(() => {
                 <div class="col-offset-4 l-2">
                   <button
                     class="btn-operation btn-update"
-                    title="Cho nhân viên nghỉ"
-                    @click="redirectPage(category.id)"
+                    title="Chỉnh sửa danh mục"
+                    @click="redirectPage(category._id)"
                   >
                     <font-awesome-icon :icon="['fas', 'pen']" />
                   </button>
@@ -186,7 +186,7 @@ onMounted(() => {
                 <div class="col-offset-4 l-2">
                   <button
                     class="btn-operation btn-remove"
-                    title="Cho nhân viên nghỉ"
+                    title="Xoá danh mục"
                     @click="showModal(category)"
                   >
                     <font-awesome-icon :icon="['fas', 'trash']" />
