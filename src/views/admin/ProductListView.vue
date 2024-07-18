@@ -57,7 +57,7 @@ let product = reactive<ProductModel>({
   status: false,
   featured: false,
   price: 0,
-  categoryId: '',
+  category: '',
   thumbnail: ''
 })
 

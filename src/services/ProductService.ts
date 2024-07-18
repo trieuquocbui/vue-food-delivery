@@ -82,7 +82,7 @@ const createPrice = (data: PriceModel): Promise<APIResponseModel<PriceModel>> =>
   return new Promise(async (resolve, reject) => {
     try {
       let result = await APIClient.post<APIResponseModel<PriceModel>>(
-        `/management/product/${data.productId}/new-price/add`,
+        `/management/product/${data.product}/new-price/add`,
         data
       )
       resolve(result.data)

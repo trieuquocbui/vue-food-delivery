@@ -1,4 +1,4 @@
-class InforModel {
+class UserModel {
   phoneNumber!: string
   fullName!: string
   address?: string
@@ -12,7 +12,7 @@ export default class AccountModel {
   conformPassword!: string
   thumbnail?: string
   status?: number
-  infor: InforModel = new InforModel()
+  user: UserModel = new UserModel()
 }
 
-export { InforModel }
+export { UserModel }

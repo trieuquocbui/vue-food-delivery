@@ -23,7 +23,7 @@ const modal = useModal()
 
 const product = reactive<ProductModel>({
   _id: '',
-  categoryId: '',
+  category: '',
   name: '',
   description: '',
   status: true,
@@ -76,7 +76,7 @@ const validate = () => {
   errors.name = product.name ? '' : 'Trường này cần nhập'
   errors.price = product.price ? '' : 'Trường này cần nhập'
   errors.quantity = product.quantity ? '' : 'Trường này cần nhập'
-  errors.categoryId = product.categoryId ? '' : 'Trường này cần nhập'
+  errors.categoryId = product.category ? '' : 'Trường này cần nhập'
   return !errors.file && !errors.name && !errors.quantity && !errors.price && !errors.categoryId
 }
 
@@ -94,7 +94,6 @@ const submit = async () => {
         'product/createProduct',
         formData
       )
-      console.log(result)
       message.value = result.message
       modal.open('Thông báo', false, undefined, 'message')
     } catch (error: any) {}
@@ -194,7 +193,7 @@ onMounted(() => {
               class="form-group-input"
               :class="{ 'input-error': errors.categoryId }"
               @focus="hideError('categoryId')"
-              v-model="product.categoryId"
+              v-model="product.category"
             >
               <option :value="''" disabled selected>Lựa chọn danh mục</option>
               <option :value="category._id" v-for="category in categoryList">

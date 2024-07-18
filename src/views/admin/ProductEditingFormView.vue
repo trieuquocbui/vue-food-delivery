@@ -10,7 +10,7 @@ import type StatusModel from '@/models/StatusModel'
 import stores from '@/stores/Store'
 import type APIResponseModel from '@/models/ApiResponseModel'
 import CodeHelper from '@/helpers/CodeHelper'
-import type CategoryModel from '@/models/CategoryModel'
+import CategoryModel from '@/models/CategoryModel'
 import Modal from '../common/Modal.vue'
 import { useRoute } from 'vue-router'
 
@@ -25,7 +25,7 @@ const route = useRoute()
 
 const product = reactive<ProductModel>({
   _id: '',
-  categoryId: '',
+  category: new CategoryModel(),
   name: '',
   description: '',
   status: true,
@@ -51,15 +51,17 @@ let status: StatusModel[] = [
 ]
 
 const hideError = (field: string) => {
-  if (field == 'id' && errors.id != '') {
-    errors.id = ''
-  } else if (field == 'name' && errors.name != '') {
+  if (field == 'name' && errors.name != '') {
     errors.name = ''
   } else if (field == 'quantity' && errors.quantity != undefined) {
     errors.quantity = ''
   } else if (field == 'categoryId' && errors.categoryId != '') {
     errors.categoryId = ''
   }
+}
+
+const categoryModel = (value: CategoryModel): CategoryModel => {
+  return value
 }
 
 const handleFileChange = (event: Event) => {
@@ -72,11 +74,10 @@ const handleFileChange = (event: Event) => {
 }
 
 const validate = () => {
-  errors.id = product._id ? '' : 'Trường này cần nhập'
   errors.name = product.name ? '' : 'Trường này cần nhập'
   errors.quantity = product.quantity ? '' : 'Trường này cần nhập'
-  errors.categoryId = product.categoryId ? '' : 'Trường này cần nhập'
-  return !errors.id && !errors.name && !errors.quantity && !errors.categoryId
+  errors.categoryId = product.category ? '' : 'Trường này cần nhập'
+  return !errors.name && !errors.quantity && !errors.categoryId
 }
 
 const selectedAcction = () => {
@@ -158,17 +159,12 @@ onMounted(() => {
           <div class="form-group col-offset-4 l-6">
             <label class="form-group-label" for="username"> Mã sản phẩm</label>
             <input
-              :class="{ 'input-error': errors.id }"
-              @focus="hideError('id')"
               v-model="product._id"
               class="form-group-input"
               type="text"
               placeholder="Nhập mã"
               disabled
             />
-            <span class="form-group-error">
-              <span>{{ errors.id }}</span>
-            </span>
           </div>
           <div class="form-group col-offset-4 l-6">
             <label class="form-group-label" for=""> Tên sản phẩm</label>
@@ -205,7 +201,7 @@ onMounted(() => {
               class="form-group-input"
               :class="{ 'input-error': errors.categoryId }"
               @focus="hideError('categoryId')"
-              v-model="product.categoryId"
+              v-model="categoryModel(product.category as CategoryModel)._id"
             >
               <option :value="''" disabled selected>Lựa chọn danh mục</option>
               <option :value="category._id" v-for="category in categoryList">

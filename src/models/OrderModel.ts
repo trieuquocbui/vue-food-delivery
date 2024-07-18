@@ -1,7 +1,8 @@
-import { InforModel } from './AccountInforModel'
+import { UserModel } from './AccountInforModel'
+import type ProductModel from './ProductModel'
 
 class OrderDetailModel {
-  productId!: string
+  product!: ProductModel | string
   quantity!: number
   price!: number
   _id!: string
@@ -9,7 +10,7 @@ class OrderDetailModel {
 
 export default class OrderModel {
   _id!: string
-  customerId!: InforModel | string
+  customer!: UserModel | string
   totalAmount!: number
   status!: number
   address!: string

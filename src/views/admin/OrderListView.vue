@@ -14,7 +14,9 @@ import type PagenationResponseModel from '@/models/PagenationResponseModel'
 import stores from '@/stores/Store'
 import OrderStatusHelper from '@/helpers/OrderStatusHelper'
 import { format } from 'date-fns'
-import { InforModel } from '@/models/AccountInforModel'
+import { UserModel } from '@/models/AccountInforModel'
+import OrderDetail from '../../components/admin/OrderDetail.vue'
+import AssignJobs from '../../components/admin/AssignJobs.vue'
 
 const route = useRoute()
 const modal = useModal()
@@ -44,7 +46,7 @@ const queries = reactive<QueryModel>({
 
 let order = reactive<OrderModel>({
   _id: '',
-  customerId: '',
+  customer: '',
   totalAmount: 0,
   status: 0,
   address: '',
@@ -72,7 +74,6 @@ const fetchData = async () => {
         paginationInfor: queries
       }
     )
-    console.log(result.data?.content)
     pagenation.data = result.data?.content || []
     pagenation.totalPageNumber = result.data?.totalPages || 0
     pagenation.currentPageNumber = result.data?.page || pagenation.currentPageNumber
@@ -96,7 +97,9 @@ const searched = async (value: { startDate: string; endDate: string }) => {
 const showModal = (value: OrderModel, action: string) => {
   order = value
   if (action == 'showDetail') {
-    modal.open('Thông tin đơn hàng', false, undefined, 'data')
+    modal.open('Thông tin đơn hàng', false, undefined, 'orderDetail')
+  } else if (action == 'showEmployeList') {
+    modal.open('Danh sách nhân viên', false, undefined, 'employeeList')
   }
 }
 
@@ -117,7 +120,7 @@ watch(
   }
 )
 
-const getCustomerInfor = (value: InforModel): InforModel => {
+const getCustomerInfor = (value: UserModel): UserModel => {
   return value
 }
 
@@ -148,18 +151,26 @@ onMounted(async () => {
           <div class="container-content-item">
             <div class="l-2">{{ order._id }}</div>
             <div class="l-5">{{ order.address }}</div>
-            <div class="l-2">{{ getCustomerInfor(order.customerId as InforModel).fullName }}</div>
+            <div class="l-2">{{ getCustomerInfor(order.customer as UserModel).fullName }}</div>
             <div class="l-1">{{ order.totalAmount }}</div>
             <div class="l-1">{{ formatDate(order.createdAt) }}</div>
             <div class="l-1">
               <div class="operation row-offset-4-wrap">
                 <div class="col-offset-4 l-4">
-                  <button class="btn-operation btn-infor" title="Thông tin" @click="showModal(order, 'showDetail')">
+                  <button
+                    class="btn-operation btn-infor"
+                    title="Thông tin đơn hàng"
+                    @click="showModal(order, 'showDetail')"
+                  >
                     <font-awesome-icon :icon="['fas', 'info']" />
                   </button>
                 </div>
                 <div class="col-offset-4 l-4">
-                  <button class="btn-operation btn-infor" title="Thông tin">
+                  <button
+                    class="btn-operation btn-infor"
+                    title="Phân công"
+                    @click="showModal(order, 'showEmployeList')"
+                  >
                     <font-awesome-icon :icon="['fas', 'rectangle-list']" />
                   </button>
                 </div>
@@ -172,57 +183,11 @@ onMounted(async () => {
     <Pagenation v-bind="pagenation" @selected-page="selectedPage"></Pagenation>
   </div>
   <Modal v-bind="modal.data" @selected-acction="selectedAcction">
-    <!-- <template #content v-if="modal.data.type == 'data'">
-      <div class="row row-offset-8" style="width: 1000px">
-        <div class="l-9 col-offset-8 row">
-          <div class="l-12 row align-items-center">
-            <div class="row l-12">
-              <div class="l-6 row">
-                <label class="l-4">Mã đơn hàng:</label>
-                <p class="l-8">{{ order.id }}</p>
-              </div>
-              <div class="l-6 row">
-                <label class="l-4">Tên món:</label>
-                <p class="l-8">{{ product.name }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="l-12 row align-items-center">
-            <div class="row l-12">
-              <div class="l-6 row">
-                <label class="l-4">Giá (VND):</label>
-                <p class="l-8">{{ product.price }}</p>
-              </div>
-              <div class="l-6 row">
-                <label class="l-4">Ngày áp dụng giá :</label>
-                <p class="l-8">{{ formatDate(product.appliedAt!) }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="l-12 row align-items-center">
-            <div class="row l-12">
-              <div class="l-6 row">
-                <label class="l-4">Số lượng (Phần):</label>
-                <p class="l-8">{{ product.quantity }}</p>
-              </div>
-              <div class="l-6 row">
-                <label class="l-4">Đã bán (Phần):</label>
-                <p class="l-8">{{ product.sold }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="l-12 row align-items-center">
-            <div class="l-6 row">
-              <label class="l-4">Trạng thái :</label>
-              <p class="l-8">{{ status(product.status) }}</p>
-            </div>
-            <div class="l-6 row">
-              <label class="l-4">Sản phẩm nổi bật :</label>
-              <p class="l-8">{{ feature(product.featured) }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </template> -->
+    <template #content v-if="modal.data.type == 'orderDetail'">
+      <OrderDetail :order="order"></OrderDetail>
+    </template>
+    <template #content v-if="modal.data.type == 'employeeList'">
+      <AssignJobs></AssignJobs>
+    </template>
   </Modal>
 </template>

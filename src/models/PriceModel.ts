@@ -1,6 +1,6 @@
 export default class PriceModel {
   _id?: string
-  productId?: string
+  product?: string
   newPrice?: number
   appliedAt?: Date
   createdAt?: Date

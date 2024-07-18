@@ -48,7 +48,7 @@ const fetchData = async () => {
       'account/getAccountList',
       {
         pagenationInfor: queries,
-        roleId: 'US'
+        roleName: 'USER'
       }
     )
     pagenation.data = result.data?.content || []
@@ -181,9 +181,9 @@ onMounted(() => {
             :key="account.username"
           >
             <div class="l-2">{{ account.username }}</div>
-            <div class="l-3">{{ account.infor.fullName }}</div>
-            <div class="l-2">{{ account.infor.phoneNumber }}</div>
-            <div class="l-2">{{ gender(account.infor.gender!) }}</div>
+            <div class="l-3">{{ account.user.fullName }}</div>
+            <div class="l-2">{{ account.user.phoneNumber }}</div>
+            <div class="l-2">{{ gender(account.user.gender!) }}</div>
             <div class="l-2">{{ status(account.status!) }}</div>
             <div class="l-1">
               <div class="operation row-offset-4-wrap">
@@ -240,23 +240,23 @@ onMounted(() => {
         <div class="l-8 row">
           <div class="l-12 row align-items-center">
             <label class="l-2">Họ và tên:</label>
-            <p class="l-10">{{ account.infor.fullName }}</p>
+            <p class="l-10">{{ account.user.fullName }}</p>
           </div>
           <div class="l-12 row align-items-center">
             <label class="l-2">Di động:</label>
-            <p class="l-10">{{ account.infor.phoneNumber }}</p>
+            <p class="l-10">{{ account.user.phoneNumber }}</p>
           </div>
           <div class="l-12 row align-items-center">
             <label class="l-2">Ngày sinh:</label>
-            <p class="l-10">{{ formatDate(account.infor.dob!) }}</p>
+            <p class="l-10">{{ formatDate(account.user.dob!) }}</p>
           </div>
           <div class="l-12 row align-items-center">
             <label class="l-2">Giới tính:</label>
-            <p class="l-10">{{ gender(account.infor.gender!) }}</p>
+            <p class="l-10">{{ gender(account.user.gender!) }}</p>
           </div>
           <div class="l-12 row align-items-center">
             <label class="l-2">Địa chỉ:</label>
-            <p class="l-10">{{ account.infor.address }}</p>
+            <p class="l-10">{{ account.user.address }}</p>
           </div>
         </div>
       </div>

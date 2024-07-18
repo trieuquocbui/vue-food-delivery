@@ -17,12 +17,12 @@ const AccountStore = {
   actions: {
     getAccountList(
       { commit }: any,
-      payload: { pagenationInfor: QueryModel; roleId: string }
+      payload: { pagenationInfor: QueryModel; roleName: string }
     ): Promise<ApiResponseModel<PagenationResponseModel<AccountModel[]>>> {
       return new Promise(async (resolve, reject) => {
         try {
           let result: ApiResponseModel<PagenationResponseModel<AccountModel[]>> =
-            await getAccountList(payload.pagenationInfor, payload.roleId)
+            await getAccountList(payload.pagenationInfor, payload.roleName)
           resolve(result)
         } catch (error) {
           reject(error)

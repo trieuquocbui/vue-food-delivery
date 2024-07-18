@@ -101,7 +101,7 @@
 }
 
 .container-heading-list {
-  font-size: 18px;
+  font-size: 1.8em;
   background: linear-gradient(180deg, var(--one-primary-color), var(--two-primary-color));
   color: var(--text-color);
   padding: 10px 0px;

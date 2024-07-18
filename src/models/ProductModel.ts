@@ -1,3 +1,5 @@
+import type CategoryModel from './CategoryModel'
+
 export default class ProductModel {
   _id!: string
   name!: string
@@ -6,7 +8,7 @@ export default class ProductModel {
   status!: boolean
   featured!: boolean
   price?: number
-  categoryId!: string
+  category!: string | CategoryModel
   thumbnail!: string
   sold?: number
   appliedAt?: Date
