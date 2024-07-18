@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Pagenation from '@/components/Pagenation.vue'
 import type PagenationModel from '@/models/PagenationModel'
-import { onMounted, reactive, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useModal } from '@/composables/ModalComposable'
 import type QueryModel from '@/models/QueryModel'
@@ -17,6 +17,7 @@ import { format } from 'date-fns'
 import { UserModel } from '@/models/AccountInforModel'
 import OrderDetail from '../../components/admin/OrderDetail.vue'
 import AssignJobs from '../../components/admin/AssignJobs.vue'
+import AssignmentModel from '@/models/AssignmentModel'
 
 const route = useRoute()
 const modal = useModal()
@@ -54,23 +55,27 @@ let order = reactive<OrderModel>({
   orderDetails: []
 })
 
+let message = ref<string>('')
+
+let status = ref<number>(OrderStatusHelper.Waite)
+
 const fetchData = async () => {
-  let status: number
   const orderStatus = String(route.params.orderStatus)
   if (orderStatus == 'waite') {
-    status = OrderStatusHelper.Waite
+    status.value = OrderStatusHelper.Waite
   } else if (orderStatus == 'shiping') {
-    status = OrderStatusHelper.SHIP
+    status.value = OrderStatusHelper.SHIP
   } else if (orderStatus == 'finish') {
-    status = OrderStatusHelper.FINISH
+    status.value = OrderStatusHelper.FINISH
   } else {
-    status = OrderStatusHelper.CENCEL
+    status.value = OrderStatusHelper.CENCEL
   }
+  let s = status.value
   try {
     const result: APIResponseModel<PagenationResponseModel<OrderModel[]>> = await stores.dispatch(
       'order/getOrderList',
       {
-        status: status,
+        status: s,
         paginationInfor: queries
       }
     )
@@ -109,6 +114,26 @@ const formatDate = (value: Date): string => {
 
 const selectedAcction = async (action: boolean) => {
   modal.close()
+}
+
+const selectedEmployee = async (employeeId: string) => {
+  modal.close()
+  let assignment: AssignmentModel = {
+    order: order._id,
+    employee: employeeId
+  }
+
+  try {
+    const result: APIResponseModel<AssignmentModel> = await stores.dispatch(
+      'assignment/assignedOrderToEmployee',
+      assignment
+    )
+    message.value = result.message
+    await fetchData()
+  } catch (error: any) {
+    message.value = error.message
+  }
+  modal.open('Thông báo', false, undefined, 'message')
 }
 
 watch(
@@ -165,13 +190,22 @@ onMounted(async () => {
                     <font-awesome-icon :icon="['fas', 'info']" />
                   </button>
                 </div>
-                <div class="col-offset-4 l-4">
+                <div class="col-offset-4 l-4" v-if="status == OrderStatusHelper.Waite">
                   <button
                     class="btn-operation btn-infor"
                     title="Phân công"
                     @click="showModal(order, 'showEmployeList')"
                   >
                     <font-awesome-icon :icon="['fas', 'rectangle-list']" />
+                  </button>
+                </div>
+                <div class="col-offset-4 l-4" v-else>
+                  <button
+                    class="btn-operation btn-infor"
+                    title="Nhân viên giao hàng"
+                    @click="showModal(order, 'showEmploye')"
+                  >
+                  <font-awesome-icon :icon="['fas', 'truck']" />
                   </button>
                 </div>
               </div>
@@ -183,11 +217,12 @@ onMounted(async () => {
     <Pagenation v-bind="pagenation" @selected-page="selectedPage"></Pagenation>
   </div>
   <Modal v-bind="modal.data" @selected-acction="selectedAcction">
+    <template #content v-if="modal.data.type == 'message'">{{ message }}</template>
     <template #content v-if="modal.data.type == 'orderDetail'">
       <OrderDetail :order="order"></OrderDetail>
     </template>
     <template #content v-if="modal.data.type == 'employeeList'">
-      <AssignJobs></AssignJobs>
+      <AssignJobs @selected-employee="selectedEmployee"></AssignJobs>
     </template>
   </Modal>
 </template>

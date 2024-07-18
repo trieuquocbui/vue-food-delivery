@@ -1,13 +1,91 @@
 <script setup lang="ts">
 import AppHelper from '@/helpers/AppHelper'
+import PagenationHelper from '@/helpers/PagenationHelper'
+import type AccountModel from '@/models/AccountInforModel'
+import type APIResponseModel from '@/models/ApiResponseModel'
+import type PagenationModel from '@/models/PagenationModel'
+import type PagenationResponseModel from '@/models/PagenationResponseModel'
+import type QueryModel from '@/models/QueryModel'
+import stores from '@/stores/Store'
+import { onMounted, reactive, watch } from 'vue'
 
-const image = AppHelper.imageDefalut
+const emit = defineEmits(['selected-employee'])
+
+const pagenation = reactive<PagenationModel<AccountModel[]>>({
+  currentPageNumber: PagenationHelper.CURRENT_PAGE_NUMBER,
+  offset: PagenationHelper.OFFSET,
+  totalPageNumber: 0,
+  searchQuery: PagenationHelper.SEARCH_QUERY,
+  sortField: PagenationHelper.SORT_FIELD,
+  sortOrder: PagenationHelper.SORT_ORDER,
+  isLastPage: false,
+  data: []
+})
+
+const queries = reactive<QueryModel>({
+  page: pagenation.currentPageNumber,
+  limit: pagenation.offset,
+  search: pagenation.searchQuery,
+  sortField: pagenation.sortField,
+  sortOrder: pagenation.sortOrder
+})
+
+const image = AppHelper.imagePath
+
+const fetchData = async () => {
+  try {
+    const result: APIResponseModel<PagenationResponseModel<AccountModel[]>> = await stores.dispatch(
+      'account/getEmployeAccountStatusList',
+      queries
+    )
+    if (queries.search !== '') {
+      if (pagenation.currentPageNumber == 1) {
+        pagenation.data = result.data?.content!
+      } else {
+        pagenation.data.push(...result.data?.content!)
+      }
+    } else {
+      if (pagenation.currentPageNumber == 1) {
+        pagenation.data = result.data?.content!
+      } else {
+        pagenation.data.push(...result.data?.content!)
+      }
+    }
+    pagenation.currentPageNumber = result.data?.page!
+    pagenation.totalPageNumber = result.data?.totalPages!
+    pagenation.isLastPage = result.data?.isLastPage
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+watch(
+  () => ({
+    currentPageNumber: pagenation.currentPageNumber,
+    searchQuery: pagenation.searchQuery
+  }),
+  async (newPagenation, oldPagenation) => {
+    if (newPagenation.searchQuery !== oldPagenation.searchQuery) {
+      queries.page = 1
+      queries.search = newPagenation.searchQuery
+      await fetchData()
+    } else if (newPagenation.currentPageNumber !== oldPagenation.currentPageNumber) {
+      queries.page = pagenation.currentPageNumber
+      await fetchData()
+    }
+  }
+)
+
+onMounted(() => {
+  fetchData()
+})
 </script>
 <template>
   <div class="assign-job">
     <div class="employee-search">
       <form class="employee-search-form">
         <input
+          v-model="pagenation.searchQuery"
           class="employee-search-form-input"
           type="search"
           placeholder="Tìm nhân viên theo tên"
@@ -15,34 +93,39 @@ const image = AppHelper.imageDefalut
       </form>
     </div>
     <div class="employee-list">
-      <div class="employee-list-item">
-        <div class="l-1-o-5">
-          <img :src="image" alt="" class="employee-list-item-image" />
+      <div class="employee-list-item" v-for="account in pagenation.data">
+        <div class="l-2">
+          <img :src="image + account.thumbnail" alt="" class="employee-list-item-image" />
         </div>
-        <div class="l-7-0-5 employee-list-item-name">Bùi Quốc Triệu</div>
+        <div class="l-7 employee-list-item-name">{{ account.user.fullName }}</div>
         <div class="l-3">
           <div class="operation row">
-            <button class="l-12 btn-assign-job" title="Phân công">Phân công</button>
+            <button
+              class="l-12 btn-assign-job"
+              title="Phân công"
+              @click="emit('selected-employee', account.user._id)"
+            >
+              Phân công
+            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
   <div class="employee-load-more">
-    <button class="btn-load-more">Tải thêm</button>
+    <button
+      class="btn-load-more"
+      v-if="!pagenation.isLastPage"
+      @click="pagenation.currentPageNumber++"
+    >
+      Tải thêm
+    </button>
   </div>
 </template>
 
 <style scoped>
-.assign-job {
-}
-.employee-search {
-}
-
-.employee-search-form {
-}
-
 .employee-load-more {
+  height: 32px;
   margin-top: 6px;
 }
 
@@ -75,7 +158,7 @@ const image = AppHelper.imageDefalut
 }
 
 .employee-list {
-  padding-right: 4px;
+  width: 354px;
   height: calc(6 * 49px);
   overflow-y: auto;
   display: flex;
@@ -98,14 +181,16 @@ const image = AppHelper.imageDefalut
 
 .employee-list-item {
   height: 49px;
+  margin: 4px 0px;
   display: flex;
   align-items: center;
   text-align: start;
+  width: 350px;
 }
 
 .employee-list-item-image {
-  width: 100%;
-  height: 100%;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
 }
 

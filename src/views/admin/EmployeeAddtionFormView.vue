@@ -31,7 +31,7 @@ let genders: GenderModel[] = [
   { id: 1, name: 'Nữ' }
 ]
 
-account.infor.gender = genders[0].id
+account.user.gender = genders[0].id
 
 const hideError = (field: string) => {
   if (field == 'username' && errors.username != '') {
@@ -73,11 +73,11 @@ const validate = () => {
     errors.conformPassword =
       account.password == account.conformPassword ? '' : 'Xác nhận mật khẩu thất bại'
   }
-  errors.fullName = account.infor?.fullName ? '' : 'Trường này cần nhập'
-  errors.phoneNumber = account.infor?.phoneNumber ? '' : 'Trường này cần nhập'
-  errors.address = account.infor?.phoneNumber ? '' : 'Trường này cần nhập'
-  errors.dob = account.infor?.dob ? '' : 'Trường này cần nhập'
-  errors.gender = account.infor?.gender != -1 ? '' : 'Trường này cần nhập'
+  errors.fullName = account.user?.fullName ? '' : 'Trường này cần nhập'
+  errors.phoneNumber = account.user?.phoneNumber ? '' : 'Trường này cần nhập'
+  errors.address = account.user?.address ? '' : 'Trường này cần nhập'
+  errors.dob = account.user?.dob ? '' : 'Trường này cần nhập'
+  errors.gender = account.user?.gender != -1 ? '' : 'Trường này cần nhập'
   return (
     !errors.username &&
     !errors.file &&
@@ -163,7 +163,7 @@ const submit = async () => {
             <input
               :class="{ 'input-error': errors.phoneNumber }"
               @focus="hideError('phoneNumber')"
-              v-model="account.infor.phoneNumber"
+              v-model="account.user.phoneNumber"
               class="form-group-input"
               type="text"
               placeholder="Nhập số điện thoại"
@@ -205,7 +205,7 @@ const submit = async () => {
             <input
               :class="{ 'input-error': errors.fullName }"
               @focus="hideError('fullName')"
-              v-model="account.infor.fullName"
+              v-model="account.user.fullName"
               class="form-group-input"
               type="text"
               placeholder="Nhập họ tên"
@@ -219,7 +219,7 @@ const submit = async () => {
             <input
               :class="{ 'input-error': errors.dob }"
               @focus="hideError('dob')"
-              v-model="account.infor!.dob"
+              v-model="account.user!.dob"
               class="form-group-input"
               type="date"
               placeholder="Nhập tên tài khoản"
@@ -233,7 +233,7 @@ const submit = async () => {
             <select
               :class="{ 'input-error': errors.gender }"
               @focus="hideError('gender')"
-              v-model="account.infor.gender"
+              v-model="account.user.gender"
               class="form-group-input"
             >
               <option
@@ -257,7 +257,7 @@ const submit = async () => {
         <textarea
           :class="{ 'input-error': errors.address }"
           @focus="hideError('address')"
-          v-model="account.infor!.address"
+          v-model="account.user!.address"
           class="form-group-input"
           type="text"
           placeholder="Nhập địa chỉ nhà"

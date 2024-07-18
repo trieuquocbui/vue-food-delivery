@@ -7,5 +7,6 @@ export default class PagenationModel<T> {
   searchQuery?: string
   startDate?: string
   endDate?: string
+  isLastPage?: boolean
   data!: T
 }

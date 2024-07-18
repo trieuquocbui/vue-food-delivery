@@ -13,7 +13,8 @@ import {
   faMoneyCheckDollar,
   faRectangleList,
   faLock,
-  faLockOpen
+  faLockOpen,
+  faTruck
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -29,7 +30,8 @@ library.add(
   faPen,
   faMoneyCheckDollar,
   faRectangleList,
-  faLockOpen
+  faLockOpen,
+  faTruck
 )
 
 export default FontAwesomeIcon

@@ -2,7 +2,11 @@ import AccountModel from '@/models/AccountInforModel'
 import type ApiResponseModel from '@/models/ApiResponseModel'
 import type PagenationResponseModel from '@/models/PagenationResponseModel'
 import type QueryModel from '@/models/QueryModel'
-import { changeAccountStatus, getAccountList } from '@/services/AccountService'
+import {
+  changeAccountStatus,
+  getAccountList,
+  getEmployeAccountStatusList
+} from '@/services/AccountService'
 
 interface AccountState {
   accountList: AccountModel[]
@@ -23,6 +27,21 @@ const AccountStore = {
         try {
           let result: ApiResponseModel<PagenationResponseModel<AccountModel[]>> =
             await getAccountList(payload.pagenationInfor, payload.roleName)
+          resolve(result)
+        } catch (error) {
+          reject(error)
+        }
+      })
+    },
+
+    getEmployeAccountStatusList(
+      { commit }: any,
+      pagenationInfor: QueryModel
+    ): Promise<ApiResponseModel<PagenationResponseModel<AccountModel[]>>> {
+      return new Promise(async (resolve, reject) => {
+        try {
+          let result: ApiResponseModel<PagenationResponseModel<AccountModel[]>> =
+            await getEmployeAccountStatusList(pagenationInfor)
           resolve(result)
         } catch (error) {
           reject(error)

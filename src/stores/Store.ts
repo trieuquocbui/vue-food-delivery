@@ -3,6 +3,7 @@ import account from '@/stores/AccountStore'
 import category from '@/stores/CategoryStore'
 import product from '@/stores/ProductStore'
 import order from '@/stores/OrderStore'
+import assignment from '@/stores/AssignmentStore'
 import { createStore } from 'vuex'
 
 const stores = createStore({
@@ -11,7 +12,8 @@ const stores = createStore({
     account,
     category,
     product,
-    order
+    order,
+    assignment
   }
 })
 
