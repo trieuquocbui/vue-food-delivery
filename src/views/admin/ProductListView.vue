@@ -15,6 +15,7 @@ import type APIResponseModel from '@/models/ApiResponseModel'
 import stores from '@/stores/Store'
 import Modal from '../common/Modal.vue'
 import { format } from 'date-fns'
+import ProductDetail from '@/components/admin/ProductDetail.vue'
 
 let breadcrumb: BreadcrumbModel[] = [
   { title: 'Trang chủ', path: '/admin/home' },
@@ -77,18 +78,6 @@ const fetchData = async () => {
 
 const selectedPage = (page: number) => {
   pagenation.currentPageNumber = page
-}
-
-const status = (value: boolean) => {
-  return value ? 'Đang kinh doanh' : 'Ngừng kinh doanh'
-}
-
-const feature = (value: boolean) => {
-  return value ? 'Đúng' : 'không'
-}
-
-const formatDate = (value: Date): string => {
-  return format(new Date(value), 'dd/MM/yyyy')
 }
 
 const selectedAcction = async (action: boolean) => {
@@ -247,63 +236,7 @@ onMounted(() => {
       <p>{{ message }}</p>
     </template>
     <template #content v-if="modal.data.type == 'data'">
-      <div class="row row-offset-8" style="width: 1000px">
-        <div class="l-3 col-offset-8">
-          <img
-            style="width: 100%; height: 100%"
-            :src="image + product.thumbnail"
-            alt="Tên sản phẩm"
-          />
-        </div>
-        <div class="l-9 col-offset-8 row">
-          <div class="l-12 row align-items-center">
-            <div class="row l-12">
-              <div class="l-6 row">
-                <label class="l-4">Mã số:</label>
-                <p class="l-8">{{ product._id }}</p>
-              </div>
-              <div class="l-6 row">
-                <label class="l-4">Tên món:</label>
-                <p class="l-8">{{ product.name }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="l-12 row align-items-center">
-            <div class="row l-12">
-              <div class="l-6 row">
-                <label class="l-4">Giá (VND):</label>
-                <p class="l-8">{{ product.price }}</p>
-              </div>
-              <div class="l-6 row">
-                <label class="l-4">Ngày áp dụng giá :</label>
-                <p class="l-8">{{ formatDate(product.appliedAt!) }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="l-12 row align-items-center">
-            <div class="row l-12">
-              <div class="l-6 row">
-                <label class="l-4">Số lượng (Phần):</label>
-                <p class="l-8">{{ product.quantity }}</p>
-              </div>
-              <div class="l-6 row">
-                <label class="l-4">Đã bán (Phần):</label>
-                <p class="l-8">{{ product.sold }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="l-12 row align-items-center">
-            <div class="l-6 row">
-              <label class="l-4">Trạng thái :</label>
-              <p class="l-8">{{ status(product.status) }}</p>
-            </div>
-            <div class="l-6 row">
-              <label class="l-4">Sản phẩm nổi bật :</label>
-              <p class="l-8">{{ feature(product.featured) }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ProductDetail :product="product"></ProductDetail>
     </template>
   </Modal>
 </template>

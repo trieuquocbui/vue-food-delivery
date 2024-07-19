@@ -10,8 +10,7 @@ const AccountView = () => import('../views/admin/AccountView.vue')
 const CategoryView = () => import('../views/admin/CateroryView.vue')
 const CategoryFormView = () => import('../views/admin/CategoryFormView.vue')
 const EmployeeAddtionFormView = () => import('../views/admin/EmployeeAddtionFormView.vue')
-const EmployeeAccountView = () => import('../views/admin/EmpoyeeAccountView.vue')
-const CustomerAccountView = () => import('../views/admin/CustomerAccountView.vue')
+const AccountListView = () => import('../views/admin/AccountListView.vue')
 const ProductAddtionFormView = () => import('../views/admin/ProductAddtionFormView.vue')
 const ProductEditingFormView = () => import('../views/admin/ProductEditingFormView.vue')
 const CategoryListView = () => import('../views/admin/CategoryListView.vue')
@@ -53,20 +52,17 @@ const routes = [
         redirect: '/admin/account/employee',
         children: [
           {
-            path: 'employee',
-            children: [
-              { path: '', component: EmployeeAccountView },
-              { path: 'add', component: EmployeeAddtionFormView }
-            ]
+            path: ':roleName',
+            component: AccountListView
           },
-          { path: 'customer', component: CustomerAccountView }
+          { path: 'employee/add', component: EmployeeAddtionFormView }
         ]
       },
       {
         path: 'order',
         component: OrdertView,
         redirect: '/admin/order/waite',
-        children: [{ path: ':orderStatus', component: OrderListView}]
+        children: [{ path: ':orderStatus', component: OrderListView }]
       }
     ]
   },

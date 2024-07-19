@@ -205,7 +205,7 @@ onMounted(async () => {
                     title="Nhân viên giao hàng"
                     @click="showModal(order, 'showEmploye')"
                   >
-                  <font-awesome-icon :icon="['fas', 'truck']" />
+                    <font-awesome-icon :icon="['fas', 'truck']" />
                   </button>
                 </div>
               </div>

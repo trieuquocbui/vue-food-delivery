@@ -10,10 +10,9 @@ import APIResponseModel from '@/models/ApiResponseModel'
 import type PagenationResponseModel from '@/models/PagenationResponseModel'
 import { useRoute } from 'vue-router'
 import Modal from '../common/Modal.vue'
-import AppHelper from '@/helpers/AppHelper'
-import { format } from 'date-fns'
 import { useModal } from '@/composables/ModalComposable'
 import AccountStatus from '@/helpers/AccountStatus'
+import UserDetail from '@/components/admin/UserDetail.vue'
 
 const route = useRoute()
 const modal = useModal()
@@ -25,7 +24,7 @@ const pagenation = reactive<PagenationModel<AccountModel[]>>({
   offset: route.query.limit ? Number(route.query.limit) : PagenationHelper.OFFSET,
   totalPageNumber: 0,
   searchQuery: route.query.search ? String(route.query.search) : PagenationHelper.SEARCH_QUERY,
-  sortField: route.query.sortBy ? String(route.query.sortBy) : PagenationHelper.SORT_FIELD,
+  sortField: route.query.sortField ? String(route.query.sortField) : PagenationHelper.SORT_FIELD,
   sortOrder: route.query.sortOrder ? String(route.query.sortOrder) : PagenationHelper.SORT_ORDER,
   data: []
 })
@@ -42,13 +41,21 @@ let account = reactive<AccountModel>(new AccountModel())
 
 const message = ref<string>('')
 
+const showAddition = ref<boolean>(true)
+
 const fetchData = async () => {
+  const roleName = String(route.params.roleName)
+  if (roleName == 'user') {
+    showAddition.value = false
+  } else {
+    showAddition.value = true
+  }
   try {
     const result: APIResponseModel<PagenationResponseModel<AccountModel[]>> = await stores.dispatch(
       'account/getAccountList',
       {
         pagenationInfor: queries,
-        roleName: 'USER'
+        roleName: roleName.toUpperCase()
       }
     )
     pagenation.data = result.data?.content || []
@@ -58,8 +65,6 @@ const fetchData = async () => {
     console.log(error)
   }
 }
-
-let image = ref<string>(AppHelper.imageDefalut)
 
 const selectedPage = (page: number) => {
   pagenation.currentPageNumber = page
@@ -92,39 +97,28 @@ const selectedAcction = async (action: boolean) => {
 const showModal = (value: AccountModel, action: string) => {
   account = value
   if (action == 'get') {
-    modal.open('Thông tin khach hàng', false, undefined, 'data')
-    if (account.thumbnail) {
-      image.value = AppHelper.imagePath + account.thumbnail
-    }
+    modal.open('Thông tin nhân viên', false, undefined, 'data')
   } else {
     modal.open('Thông báo', true, undefined, 'message')
     if (action == 'remove') {
-      message.value = 'Bạn muốn khoá tài khoản khách hàng này!'
+      message.value = 'Bạn muốn khoá tài khoản nhân viên này!'
     } else {
-      message.value = 'Bạn muốn mở khoá tài khoản khách hàng này!'
+      message.value = 'Bạn muốn mở khoá tài khoản nhân viên này!'
     }
   }
 }
 
-const gender = (value?: number): string | undefined => {
-  if (value) {
-    return value ? 'Nam' : 'Nữ'
-  }
-  return
-}
-
-const formatDate = (value?: Date): string | undefined => {
-  if (value) {
-    return format(new Date(value), 'dd/MM/yyyy')
-  }
-  return
+const gender = (value: number): string => {
+  return value ? 'Nữ' : 'Nam'
 }
 
 const status = (value: number): string => {
-  if (value == 1) {
+  if (value == AccountStatus.ONLINE) {
     return 'Hoạt động'
+  } else if (value == AccountStatus.CLOSE) {
+    return 'Bị khoá'
   } else {
-    return 'Bị cấm'
+    return 'Không hoạt động'
   }
 }
 
@@ -145,6 +139,15 @@ watch(
   }
 )
 
+watch(
+  () => route.params.roleName,
+  async (newStatus, oldStatus) => {
+    if (newStatus !== oldStatus) {
+      await fetchData()
+    }
+  }
+)
+
 onMounted(() => {
   fetchData()
 })
@@ -153,6 +156,18 @@ onMounted(() => {
 <template>
   <div class="content-main">
     <div class="content-main-header">
+      <div class="content-main-add" v-if="showAddition">
+        <h3 class="content-main-add-title">Thêm nhân viên:</h3>
+        <div class="operation">
+          <button
+            @click="$router.push('/admin/account/employee/add')"
+            class="ml-4 btn-operation btn-add"
+            title="Thêm tài khoản"
+          >
+            <font-awesome-icon :icon="['fas', 'plus']" />
+          </button>
+        </div>
+      </div>
       <form class="form" action="">
         <div class="form-group">
           <input
@@ -200,7 +215,7 @@ onMounted(() => {
                   <button
                     v-if="account.status == AccountStatus.CLOSE"
                     class="btn-operation btn-remove"
-                    title="Mở tài khoản khách hàng"
+                    title="Mở tài khoản nhân viên"
                     @click="showModal(account, 'put')"
                   >
                     <font-awesome-icon :icon="['fas', 'lock-open']" />
@@ -208,7 +223,7 @@ onMounted(() => {
                   <button
                     v-else-if="account.status != AccountStatus.CLOSE"
                     class="btn-operation btn-remove"
-                    title="Khoá tài khoản khách hàng"
+                    title="Khoá tài khoản nhân viên"
                     @click="showModal(account, 'remove')"
                   >
                     <font-awesome-icon :icon="['fas', 'lock']" />
@@ -233,33 +248,7 @@ onMounted(() => {
       <p>{{ message }}</p>
     </template>
     <template #content v-if="modal.data.type == 'data'">
-      <div class="row" style="width: 800px">
-        <div class="l-4">
-          <img style="width: 100%; height: 100%" :src="image" alt="Tên sản phẩm" />
-        </div>
-        <div class="l-8 row">
-          <div class="l-12 row align-items-center">
-            <label class="l-2">Họ và tên:</label>
-            <p class="l-10">{{ account.user.fullName }}</p>
-          </div>
-          <div class="l-12 row align-items-center">
-            <label class="l-2">Di động:</label>
-            <p class="l-10">{{ account.user.phoneNumber }}</p>
-          </div>
-          <div class="l-12 row align-items-center">
-            <label class="l-2">Ngày sinh:</label>
-            <p class="l-10">{{ formatDate(account.user.dob!) }}</p>
-          </div>
-          <div class="l-12 row align-items-center">
-            <label class="l-2">Giới tính:</label>
-            <p class="l-10">{{ gender(account.user.gender!) }}</p>
-          </div>
-          <div class="l-12 row align-items-center">
-            <label class="l-2">Địa chỉ:</label>
-            <p class="l-10">{{ account.user.address }}</p>
-          </div>
-        </div>
-      </div>
+      <UserDetail :account="account"></UserDetail>
     </template>
   </Modal>
 </template>
