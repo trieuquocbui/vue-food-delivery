@@ -1,14 +1,28 @@
+<script setup lang="ts">
+import AccountMenu from '../admin/AccountMenu.vue'
+import Notification from './Notification.vue'
+</script>
+
 <template>
   <div class="header">
     <div class="l-6">
       <div class="header_nav">
-        <RouterLink class="header_nav_link" to="/admin/home" activeClass="active">Trang chủ</RouterLink>
+        <RouterLink class="header_nav_link" to="/admin/home" activeClass="active"
+          >Trang chủ</RouterLink
+        >
       </div>
     </div>
     <div class="l-6">
       <ul class="header_nav--right">
         <li class="header_item--right">
-          <div href="" class="header_item_link--right"></div>
+          <div class="header_item_link--right">
+            <AccountMenu></AccountMenu>
+          </div>
+        </li>
+        <li class="header_item--right">
+          <div class="header_item_link--right">
+            <Notification></Notification>
+          </div>
         </li>
       </ul>
     </div>

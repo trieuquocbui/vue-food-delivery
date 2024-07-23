@@ -6,6 +6,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import Router from './router'
 import Store from './stores/Store'
+import vDropdown from '@/directives/Dropdown'
 
 import FontAwesomeIcon from './plugins/Fontawesome-icons'
 
@@ -18,5 +19,7 @@ app.component('font-awesome-icon', FontAwesomeIcon)
 app.use(Router)
 
 app.use(Store)
+
+app.directive('dropdown', vDropdown)
 
 app.mount('#app')

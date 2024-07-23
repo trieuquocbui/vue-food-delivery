@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Pagenation from '@/components/Pagenation.vue'
 import type PagenationModel from '@/models/PagenationModel'
-import { onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import PagenationHelper from '@/helpers/PagenationHelper'
 import stores from '@/stores/Store'
 import AccountModel from '@/models/AccountInforModel'
@@ -13,6 +13,7 @@ import Modal from '../common/Modal.vue'
 import { useModal } from '@/composables/ModalComposable'
 import AccountStatus from '@/helpers/AccountStatus'
 import UserDetail from '@/components/admin/UserDetail.vue'
+import { socket, state } from '@/socket'
 
 const route = useRoute()
 const modal = useModal()
@@ -149,6 +150,7 @@ watch(
 )
 
 onMounted(() => {
+  socket.connect()
   fetchData()
 })
 </script>

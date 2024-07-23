@@ -14,3 +14,11 @@ const props = defineProps<{ navs: NavModel[] }>()
     </ul>
   </div>
 </template>
+
+<style scoped>
+.content-nav-list-item-link {
+  box-shadow:
+    0 4px 6px rgba(0, 128, 0, 0.2),
+    /* Bóng mờ xanh lá đậm */ 0 1px 3px rgba(0, 128, 0, 0.15);
+}
+</style>

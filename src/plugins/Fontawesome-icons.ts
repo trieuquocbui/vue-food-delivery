@@ -14,7 +14,8 @@ import {
   faRectangleList,
   faLock,
   faLockOpen,
-  faTruck
+  faTruck,
+  faBell
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -31,7 +32,8 @@ library.add(
   faMoneyCheckDollar,
   faRectangleList,
   faLockOpen,
-  faTruck
+  faTruck,
+  faBell
 )
 
 export default FontAwesomeIcon
