@@ -150,7 +150,6 @@ watch(
 )
 
 onMounted(() => {
-  socket.connect()
   fetchData()
 })
 </script>

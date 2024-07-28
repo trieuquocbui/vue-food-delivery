@@ -28,7 +28,7 @@ const pagenation = reactive<PagenationModel<CategoryModel[]>>({
   currentPageNumber: route.query.page
     ? Number(route.query.page)
     : PagenationHelper.CURRENT_PAGE_NUMBER,
-  offset: route.query.limit ? Number(route.query.limit) : 3,
+  offset: route.query.limit ? Number(route.query.limit) : 4,
   totalPageNumber: 0,
   searchQuery: route.query.search ? String(route.query.search) : PagenationHelper.SEARCH_QUERY,
   sortField: route.query.sortField ? String(route.query.sortField) : PagenationHelper.SORT_FIELD,

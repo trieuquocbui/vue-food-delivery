@@ -3,6 +3,8 @@ import type NavModel from '@/models/NavModel'
 import Breadcrumb from '@/components/admin/Breadcrumb.vue'
 import ContentNav from '@/components/admin/Content-Nav.vue'
 import { RouterView } from 'vue-router'
+import { onMounted } from 'vue'
+import { socket } from '@/socket'
 
 let breadcrumb: NavModel[] = [
   { title: 'Trang chủ', path: '/admin/home' },

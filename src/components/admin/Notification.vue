@@ -1,8 +1,88 @@
 <script setup lang="ts">
 import AppHelper from '@/helpers/AppHelper'
-import { ref } from 'vue'
+import PagenationHelper from '@/helpers/PagenationHelper'
+import type APIResponseModel from '@/models/ApiResponseModel'
+import type NotificationDetailsModel from '@/models/NotificationDetails'
+import type NotificationModel from '@/models/NotificationModel'
+import type PagenationModel from '@/models/PagenationModel'
+import type PagenationResponseModel from '@/models/PagenationResponseModel'
+import type QueryModel from '@/models/QueryModel'
+import stores from '@/stores/Store'
+import { format } from 'date-fns'
+import { onMounted, reactive, ref, watch } from 'vue'
 
 const image = ref<string>(AppHelper.imageBell)
+
+const pagenation = reactive<PagenationModel<NotificationDetailsModel[]>>({
+  currentPageNumber: PagenationHelper.CURRENT_PAGE_NUMBER,
+  offset: PagenationHelper.OFFSET,
+  totalPageNumber: 0,
+  searchQuery: PagenationHelper.SEARCH_QUERY,
+  sortField: PagenationHelper.SORT_FIELD,
+  sortOrder: PagenationHelper.SORT_ORDER,
+  isLastPage: false,
+  data: []
+})
+
+const queries = reactive<QueryModel>({
+  page: pagenation.currentPageNumber,
+  limit: pagenation.offset,
+  sortField: pagenation.sortField,
+  sortOrder: pagenation.sortOrder
+})
+
+const fetchData = async () => {
+  try {
+    const result: APIResponseModel<PagenationResponseModel<NotificationDetailsModel[]>> =
+      await stores.dispatch('notification/getNotificationList', queries)
+    if (queries.search !== '') {
+      if (pagenation.currentPageNumber == 1) {
+        pagenation.data = result.data?.content!
+      } else {
+        pagenation.data.push(...result.data?.content!)
+      }
+    } else {
+      if (pagenation.currentPageNumber == 1) {
+        pagenation.data = result.data?.content!
+      } else {
+        pagenation.data.push(...result.data?.content!)
+      }
+    }
+    pagenation.currentPageNumber = result.data?.page!
+    pagenation.totalPageNumber = result.data?.totalPages!
+    pagenation.isLastPage = result.data?.isLastPage
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const loadmore = () => {
+  pagenation.currentPageNumber++
+}
+
+watch(
+  () => ({
+    currentPageNumber: pagenation.currentPageNumber,
+    searchQuery: pagenation.searchQuery
+  }),
+  async (newPagenation, oldPagenation) => {
+    if (newPagenation.searchQuery !== oldPagenation.searchQuery) {
+      queries.page = 1
+      queries.search = newPagenation.searchQuery
+      await fetchData()
+    } else if (newPagenation.currentPageNumber !== oldPagenation.currentPageNumber) {
+      queries.page = pagenation.currentPageNumber
+      await fetchData()
+    }
+  }
+)
+const formatDatetime = (value: Date): string => {
+  return format(new Date(value), 'dd/MM/yyyy HH:mm:ss')
+}
+
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <template>
@@ -12,75 +92,22 @@ const image = ref<string>(AppHelper.imageBell)
     </div>
     <div class="notification-list">
       <div class="scroll-bar">
-        <a class="notification-item">
+        <a class="notification-item" v-for="item in pagenation.data">
           <div class="notification-item-img">
             <img :src="image" alt="" />
           </div>
           <div class="notification-item-info">
             <div class="notification-item-info-body">
-              <p>Có đơn đặt hàng từ khách hàng Nguyễn Văn 1F</p>
+              <p>{{ item.notification.message }}</p>
             </div>
-            <div class="notification-item-info-datetime">Ngày: asd</div>
-          </div>
-        </a>
-        <a class="notification-item">
-          <div class="notification-item-img">
-            <img :src="image" alt="" />
-          </div>
-          <div class="notification-item-info">
-            <div class="notification-item-info-body">
-              <p>Có đơn đặt hàng từ khách hàng Nguyễn Văn 1F</p>
+            <div class="notification-item-info-datetime">
+              Ngày: {{ formatDatetime(item.notification.createdAt) }}
             </div>
-            <div class="notification-item-info-datetime">Ngày: asd</div>
-          </div>
-        </a>
-        <a class="notification-item">
-          <div class="notification-item-img">
-            <img :src="image" alt="" />
-          </div>
-          <div class="notification-item-info">
-            <div class="notification-item-info-body">
-              <p>Có đơn đặt hàng từ khách hàng Nguyễn Văn 1F</p>
-            </div>
-            <div class="notification-item-info-datetime">Ngày: asd</div>
-          </div>
-        </a>
-        <a class="notification-item">
-          <div class="notification-item-img">
-            <img :src="image" alt="" />
-          </div>
-          <div class="notification-item-info">
-            <div class="notification-item-info-body">
-              <p>Có đơn đặt hàng từ khách hàng Nguyễn Văn 1F</p>
-            </div>
-            <div class="notification-item-info-datetime">Ngày: asd</div>
-          </div>
-        </a>
-        <a class="notification-item">
-          <div class="notification-item-img">
-            <img :src="image" alt="" />
-          </div>
-          <div class="notification-item-info">
-            <div class="notification-item-info-body">
-              <p>Có đơn đặt hàng từ khách hàng Nguyễn Văn 1F</p>
-            </div>
-            <div class="notification-item-info-datetime">Ngày: asd</div>
-          </div>
-        </a>
-        <a class="notification-item">
-          <div class="notification-item-img">
-            <img :src="image" alt="" />
-          </div>
-          <div class="notification-item-info">
-            <div class="notification-item-info-body">
-              <p>Có đơn đặt hàng từ khách hàng Nguyễn Văn 1F</p>
-            </div>
-            <div class="notification-item-info-datetime">Ngày: asd</div>
           </div>
         </a>
       </div>
       <div class="show-notification">
-        <a class="">Xem thêm</a>
+        <button v-if="!pagenation.isLastPage" @click="loadmore()" class="">Xem thêm</button>
       </div>
     </div>
     <!-- <div class="row notification_empty">
@@ -120,7 +147,7 @@ const image = ref<string>(AppHelper.imageBell)
   position: absolute;
   padding: 6px 0px 6px 6px;
   right: 0px;
-  top: 46px;
+  top: 42px;
   width: 300px;
   box-shadow:
     0 4px 6px rgba(0, 0, 0, 0.1),
@@ -151,7 +178,7 @@ const image = ref<string>(AppHelper.imageBell)
   border-style: solid;
   border-color: transparent transparent var(--white-background-color) transparent;
   border-width: 6px 6px;
-  right: 14px;
+  right: 10px;
   top: -10px;
 }
 

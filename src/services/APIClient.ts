@@ -1,4 +1,5 @@
 import baseUrl from '@/helpers/BaseUrlHelper'
+import { getRole } from '@/helpers/DecodeHelper'
 import axios from 'axios'
 
 const APIClient = axios.create({
@@ -7,7 +8,7 @@ const APIClient = axios.create({
 })
 
 APIClient.interceptors.request.use((config) => {
-  let token: String = localStorage.getItem('authToken')!
+  let token: string = localStorage.getItem('authToken')!
   if (token) {
     config.headers.Authorization = 'Bearer ' + token
   }

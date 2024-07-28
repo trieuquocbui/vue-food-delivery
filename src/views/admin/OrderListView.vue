@@ -145,6 +145,16 @@ watch(
   }
 )
 
+watch(
+  () => pagenation.currentPageNumber,
+  async (newPage, oldPage) => {
+    if (newPage !== oldPage) {
+      queries.page = pagenation.currentPageNumber
+      await fetchData()
+    }
+  }
+)
+
 const getCustomerInfor = (value: UserModel): UserModel => {
   return value
 }

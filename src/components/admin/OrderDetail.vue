@@ -83,7 +83,7 @@ watch(
             <div class="l-1">
               <img
                 :src="imagePath + productModel(orderDetail.product as ProductModel).thumbnail"
-                style="height: 100%; width: 100%"
+                style="height: 54px; width: 84px"
                 alt=""
                 class="image"
               />

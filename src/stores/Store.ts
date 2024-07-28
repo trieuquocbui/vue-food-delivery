@@ -4,6 +4,7 @@ import category from '@/stores/CategoryStore'
 import product from '@/stores/ProductStore'
 import order from '@/stores/OrderStore'
 import assignment from '@/stores/AssignmentStore'
+import notification from '@/stores/NotificationStore'
 import { createStore } from 'vuex'
 
 const stores = createStore({
@@ -13,7 +14,8 @@ const stores = createStore({
     category,
     product,
     order,
-    assignment
+    assignment,
+    notification
   }
 })
 

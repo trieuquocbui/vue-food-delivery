@@ -11,7 +11,9 @@ const toggleDisplay = (el: HTMLElement) => {
 
 export default {
   mounted(el: HTMLElement) {
-    el.addEventListener('click', () => toggleDisplay(el))
+    el.addEventListener('click', (event: Event) => {
+      toggleDisplay(el)
+    })
   },
   unmounted(el: HTMLElement) {
     el.removeEventListener('click', () => toggleDisplay(el))
