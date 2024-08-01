@@ -3,8 +3,10 @@ import HeaderView from '../../components/admin/Header.vue'
 import NavView from '../../components/admin/Nav.vue'
 import FooterView from '../../components/admin/Footer.vue'
 import type NavModel from '@/models/NavModel'
-import { socket } from '@/socket'
+
 import { useToast } from 'vue-toast-notification'
+import { io } from 'socket.io-client'
+import { socket } from '@/socket'
 
 const toast = useToast()
 
@@ -15,9 +17,15 @@ let viewMav: NavModel[] = [
   { title: 'Quản lí đơn hàng', path: '/admin/order' }
 ]
 
-socket.connect()
-
 socket.on('registerNotificationToAdmin', (data: string) => {
+  toast.open({ message: data, position: 'bottom-right', dismissible: true, duration: 0 })
+})
+
+socket.on('order-unassigned', (data: string) => {
+  toast.open({ message: data, position: 'bottom-right', dismissible: true, duration: 0 })
+})
+
+socket.on('order-assigned', (data: string) => {
   toast.open({ message: data, position: 'bottom-right', dismissible: true, duration: 0 })
 })
 </script>

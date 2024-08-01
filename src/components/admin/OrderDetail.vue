@@ -62,7 +62,7 @@ watch(
       </div>
     </div>
     <div class="l-12 row mt-6">
-      <p><label>Địa chỉ: </label>{{ props.order.address }}</p>
+      <p><label>Địa chỉ: </label>{{ props.order.address1 + ' ' + props.order.address2 }}</p>
     </div>
     <div class="l-12 row mt-6">
       <div class="order-details l-12">

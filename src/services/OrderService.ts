@@ -21,4 +21,18 @@ const getOrderList = (
   })
 }
 
-export { getOrderList }
+const editlOrder = (orderId: string, status: number): Promise<APIResponseModel<OrderModel>> => {
+  return new Promise(async (resovle, reject) => {
+    try {
+      let result = await APIClient.put<APIResponseModel<OrderModel>>(
+        `public/order/${orderId}/edit/status`,
+        { status: status }
+      )
+      resovle(result.data)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+export { getOrderList, editlOrder }

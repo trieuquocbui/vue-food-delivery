@@ -50,23 +50,28 @@ let order = reactive<OrderModel>({
   customer: '',
   totalAmount: 0,
   status: 0,
-  address: '',
+  address1: '',
+  address2: '',
   createdAt: new Date(),
   orderDetails: []
 })
 
 let message = ref<string>('')
 
-let status = ref<number>(OrderStatusHelper.Waite)
+let status = ref<number>(OrderStatusHelper.WAITE)
+
+let selectedOrderAcction = ref<string>('')
 
 const fetchData = async () => {
   const orderStatus = String(route.params.orderStatus)
   if (orderStatus == 'waite') {
-    status.value = OrderStatusHelper.Waite
+    status.value = OrderStatusHelper.WAITE
   } else if (orderStatus == 'shiping') {
     status.value = OrderStatusHelper.SHIP
   } else if (orderStatus == 'finish') {
     status.value = OrderStatusHelper.FINISH
+  } else if (orderStatus == 'accept') {
+    status.value = OrderStatusHelper.ACCEPT
   } else {
     status.value = OrderStatusHelper.CENCEL
   }
@@ -105,6 +110,14 @@ const showModal = (value: OrderModel, action: string) => {
     modal.open('Thông tin đơn hàng', false, undefined, 'orderDetail')
   } else if (action == 'showEmployeList') {
     modal.open('Danh sách nhân viên', false, undefined, 'employeeList')
+  } else if (action == 'cancelOrder') {
+    selectedOrderAcction.value = action
+    modal.open('Thông báo', true, undefined, 'message')
+    message.value = 'Chắc chắn bạn muốn huỷ đơn này'
+  } else if (action == 'acceptOrder') {
+    selectedOrderAcction.value = action
+    modal.open('Thông báo', true, undefined, 'message')
+    message.value = 'Chắc chắn bạn muốn nhận đơn này'
   }
 }
 
@@ -114,6 +127,30 @@ const formatDate = (value: Date): string => {
 
 const selectedAcction = async (action: boolean) => {
   modal.close()
+  if (action) {
+    if (
+      selectedOrderAcction.value == 'cancelOrder' ){
+      await editlOrder(OrderStatusHelper.CENCEL)
+    } else if(selectedOrderAcction.value == 'acceptOrder'){
+      await editlOrder(OrderStatusHelper.ACCEPT)
+      
+    }
+    await fetchData()
+  }
+}
+
+const editlOrder = async (status:number) => {
+  modal.close()
+  try {
+    const result: APIResponseModel<OrderModel> = await stores.dispatch('order/editlOrder', {
+      status: status,
+      orderId: order._id
+    })
+    message.value = result.message
+  } catch (error: any) {
+    message.value = error.message
+  }
+  modal.open('Thông báo', false, undefined, 'message')
 }
 
 const selectedEmployee = async (employeeId: string) => {
@@ -185,7 +222,7 @@ onMounted(async () => {
         <div class="container-content-list" v-for="order in pagenation.data">
           <div class="container-content-item">
             <div class="l-2">{{ order._id }}</div>
-            <div class="l-5">{{ order.address }}</div>
+            <div class="l-5">{{ order.address1 + ' ' + order.address2 }}</div>
             <div class="l-2">{{ getCustomerInfor(order.customer as UserModel).fullName }}</div>
             <div class="l-1">{{ order.totalAmount }}</div>
             <div class="l-1">{{ formatDate(order.createdAt) }}</div>
@@ -200,7 +237,25 @@ onMounted(async () => {
                     <font-awesome-icon :icon="['fas', 'info']" />
                   </button>
                 </div>
-                <div class="col-offset-4 l-4" v-if="status == OrderStatusHelper.Waite">
+                <div class="col-offset-4 l-4" v-if="status == OrderStatusHelper.WAITE">
+                  <button
+                    class="btn-operation btn-infor"
+                    title="Nhận đơn hàng"
+                    @click="showModal(order, 'acceptOrder')"
+                  >
+                    <font-awesome-icon :icon="['fas', 'check']" />
+                  </button>
+                </div>
+                <div class="col-offset-4 l-4" v-if="status == OrderStatusHelper.WAITE">
+                  <button
+                    class="btn-operation btn-infor"
+                    title="Huỷ đơn"
+                    @click="showModal(order, 'cancelOrder')"
+                  >
+                    <font-awesome-icon :icon="['fas', 'xmark']" />
+                  </button>
+                </div>
+                <div class="col-offset-4 l-4" v-if="status == OrderStatusHelper.ACCEPT">
                   <button
                     class="btn-operation btn-infor"
                     title="Phân công"
@@ -209,7 +264,7 @@ onMounted(async () => {
                     <font-awesome-icon :icon="['fas', 'rectangle-list']" />
                   </button>
                 </div>
-                <div class="col-offset-4 l-4" v-else>
+                <div class="col-offset-4 l-4" v-if="status == OrderStatusHelper.SHIP">
                   <button
                     class="btn-operation btn-infor"
                     title="Nhân viên giao hàng"

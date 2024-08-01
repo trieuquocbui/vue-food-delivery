@@ -5,7 +5,7 @@ export const state = reactive({
   connected: false
 })
 
-const URL = 'http://localhost:3000'
+const URL = 'http://localhost:3000/admin'
 
 export const socket = io(URL)
 

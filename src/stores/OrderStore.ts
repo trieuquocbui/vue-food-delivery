@@ -2,7 +2,7 @@ import type APIResponseModel from '@/models/ApiResponseModel'
 import type OrderModel from '@/models/OrderModel'
 import type PagenationResponseModel from '@/models/PagenationResponseModel'
 import type QueryModel from '@/models/QueryModel'
-import { getOrderList } from '@/services/OrderService'
+import { editlOrder, getOrderList } from '@/services/OrderService'
 
 interface OrdertState {
   orderList: OrderModel[]
@@ -30,6 +30,23 @@ const OrderStore = {
             payload.paginationInfor
           )
           commit('setOrderList', result.data?.content)
+          resolve(result)
+        } catch (error) {
+          reject(error)
+        }
+      })
+    },
+
+    editlOrder(
+      { commit }: any,
+      payload: { status: number; orderId: string }
+    ): Promise<APIResponseModel<OrderModel>> {
+      return new Promise(async (resolve, reject) => {
+        try {
+          let result: APIResponseModel<OrderModel> = await editlOrder(
+            payload.orderId,
+            payload.status
+          )
           resolve(result)
         } catch (error) {
           reject(error)

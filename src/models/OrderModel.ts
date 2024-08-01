@@ -13,7 +13,8 @@ export default class OrderModel {
   customer!: UserModel | string
   totalAmount!: number
   status!: number
-  address!: string
+  address1!: string
+  address2!: string
   createdAt!: Date
   orderDetails!: OrderDetailModel[]
 }

@@ -10,7 +10,8 @@ let breadcrumb: NavModel[] = [
 ]
 
 let contentnav: NavModel[] = [
-  { title: 'Đang Đợi', path: '/admin/order/waite' },
+  { title: 'Đang Chờ', path: '/admin/order/waite' },
+  { title: 'Chấp nhận', path: '/admin/order/accept' },
   { title: 'Đang giao hàng', path: '/admin/order/shiping' },
   { title: 'Đã giao', path: '/admin/order/finish' },
   { title: 'Đã hủy', path: '/admin/order/cencal' }
