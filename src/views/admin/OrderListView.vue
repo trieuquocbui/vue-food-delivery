@@ -14,10 +14,12 @@ import type PagenationResponseModel from '@/models/PagenationResponseModel'
 import stores from '@/stores/Store'
 import OrderStatusHelper from '@/helpers/OrderStatusHelper'
 import { format } from 'date-fns'
-import { UserModel } from '@/models/AccountInforModel'
+import AccountModel, { UserModel } from '@/models/AccountInforModel'
 import OrderDetail from '../../components/admin/OrderDetail.vue'
 import AssignJobs from '../../components/admin/AssignJobs.vue'
 import AssignmentModel from '@/models/AssignmentModel'
+import UserDetail from '@/components/admin/UserDetail.vue'
+import CodeHelper from '@/helpers/CodeHelper'
 
 const route = useRoute()
 const modal = useModal()
@@ -57,6 +59,13 @@ let order = reactive<OrderModel>({
 })
 
 let message = ref<string>('')
+
+let account = reactive<AccountModel>({
+  username: '',
+  password: '',
+  conformPassword: '',
+  user: new UserModel()
+})
 
 let status = ref<number>(OrderStatusHelper.WAITE)
 
@@ -104,7 +113,7 @@ const searched = async (value: { startDate: string; endDate: string }) => {
   await fetchData()
 }
 
-const showModal = (value: OrderModel, action: string) => {
+const showModal = async (value: OrderModel, action: string) => {
   order = value
   if (action == 'showDetail') {
     modal.open('Thông tin đơn hàng', false, undefined, 'orderDetail')
@@ -118,6 +127,19 @@ const showModal = (value: OrderModel, action: string) => {
     selectedOrderAcction.value = action
     modal.open('Thông báo', true, undefined, 'message')
     message.value = 'Chắc chắn bạn muốn nhận đơn này'
+  } else if (action == 'showEmploye') {
+    try {
+      const result: APIResponseModel<AccountModel> = await stores.dispatch(
+        'account/getAccount',
+        (order.customer as UserModel)._id!
+      )
+      if (result.code == CodeHelper.SUCCESS && result.data) {
+        account = result.data
+      }
+    } catch (error) {
+      console.log(error)
+    }
+    modal.open('Thông tin nhân viên', false, undefined, 'data')
   }
 }
 
@@ -128,18 +150,16 @@ const formatDate = (value: Date): string => {
 const selectedAcction = async (action: boolean) => {
   modal.close()
   if (action) {
-    if (
-      selectedOrderAcction.value == 'cancelOrder' ){
+    if (selectedOrderAcction.value == 'cancelOrder') {
       await editlOrder(OrderStatusHelper.CENCEL)
-    } else if(selectedOrderAcction.value == 'acceptOrder'){
+    } else if (selectedOrderAcction.value == 'acceptOrder') {
       await editlOrder(OrderStatusHelper.ACCEPT)
-      
     }
     await fetchData()
   }
 }
 
-const editlOrder = async (status:number) => {
+const editlOrder = async (status: number) => {
   modal.close()
   try {
     const result: APIResponseModel<OrderModel> = await stores.dispatch('order/editlOrder', {
@@ -255,7 +275,10 @@ onMounted(async () => {
                     <font-awesome-icon :icon="['fas', 'xmark']" />
                   </button>
                 </div>
-                <div class="col-offset-4 l-4" v-if="status == OrderStatusHelper.ACCEPT">
+                <div
+                  class="col-offset-4 l-4"
+                  v-if="status == OrderStatusHelper.ACCEPT && !order.assignmented"
+                >
                   <button
                     class="btn-operation btn-infor"
                     title="Phân công"
@@ -264,7 +287,10 @@ onMounted(async () => {
                     <font-awesome-icon :icon="['fas', 'rectangle-list']" />
                   </button>
                 </div>
-                <div class="col-offset-4 l-4" v-if="status == OrderStatusHelper.SHIP">
+                <div
+                  class="col-offset-4 l-4"
+                  v-if="status != OrderStatusHelper.WAITE && order.assignmented"
+                >
                   <button
                     class="btn-operation btn-infor"
                     title="Nhân viên giao hàng"
@@ -288,6 +314,9 @@ onMounted(async () => {
     </template>
     <template #content v-if="modal.data.type == 'employeeList'">
       <AssignJobs @selected-employee="selectedEmployee"></AssignJobs>
+    </template>
+    <template #content v-if="modal.data.type == 'showEmploye'">
+      <UserDetail :account="account"></UserDetail>
     </template>
   </Modal>
 </template>

@@ -3,10 +3,15 @@ import type APIResponse from '@/models/ApiResponseModel'
 import APIClient from './APIClient'
 import type AccountModel from '@/models/AccountInforModel'
 
-const login = (data: LoginModel): Promise<APIResponse<string>> => {
+const login = (
+  data: LoginModel
+): Promise<APIResponse<{ account: AccountModel; token: string }>> => {
   return new Promise(async (resolve, reject) => {
     try {
-      let result = await APIClient.post<APIResponse<string>>('/auth/login', data)
+      let result = await APIClient.post<APIResponse<{ account: AccountModel; token: string }>>(
+        '/auth/login',
+        data
+      )
       resolve(result.data)
     } catch (error) {
       reject(error)

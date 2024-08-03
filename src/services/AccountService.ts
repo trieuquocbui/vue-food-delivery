@@ -35,6 +35,19 @@ const changeAccountStatus = (account: AccountModel): Promise<ApiResponseModel<Ac
   })
 }
 
+const getAccount = (userId: string): Promise<ApiResponseModel<AccountModel>> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let result = await APIClient.get<ApiResponseModel<AccountModel>>(
+        `/public/account/user/${userId}`
+      )
+      resolve(result.data)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
 const getEmployeAccountStatusList = (
   pagenationInfor: QueryModel
 ): Promise<ApiResponseModel<PagenationResponseModel<AccountModel[]>>> => {
@@ -51,4 +64,4 @@ const getEmployeAccountStatusList = (
   })
 }
 
-export { getAccountList, changeAccountStatus, getEmployeAccountStatusList }
+export { getAccountList, changeAccountStatus, getEmployeAccountStatusList, getAccount }

@@ -15,19 +15,23 @@ const AuthStore = {
   mutations: {
     setToken(state: AuthState, token: string) {
       state.authToken = token
-      localStorage.setItem('authToken', token);
+      localStorage.setItem('authToken', token)
     },
     logout(state: AuthState) {
       ;(state.authToken = ''), (state.message = '')
-      localStorage.removeItem('authToken');
+      localStorage.removeItem('authToken')
     }
   },
   actions: {
-    login({ commit }: any, loginModel: LoginModel): Promise<ApiResponseModel<string>> {
+    login(
+      { commit }: any,
+      loginModel: LoginModel
+    ): Promise<ApiResponseModel<{ account: AccountModel; token: string }>> {
       return new Promise(async (resolve, reject) => {
         try {
-          let result: ApiResponseModel<string> = await login(loginModel)
-          commit('setToken', result.data)
+          let result: ApiResponseModel<{ account: AccountModel; token: string }> =
+            await login(loginModel)
+          commit('setToken', result.data?.token)
           resolve(result)
         } catch (error) {
           reject(error)

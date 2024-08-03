@@ -4,6 +4,7 @@ import type PagenationResponseModel from '@/models/PagenationResponseModel'
 import type QueryModel from '@/models/QueryModel'
 import {
   changeAccountStatus,
+  getAccount,
   getAccountList,
   getEmployeAccountStatusList
 } from '@/services/AccountService'
@@ -55,8 +56,18 @@ const AccountStore = {
     ): Promise<ApiResponseModel<AccountModel>> {
       return new Promise(async (resolve, reject) => {
         try {
-          console.log(account)
           let result: ApiResponseModel<AccountModel> = await changeAccountStatus(account)
+          resolve(result)
+        } catch (error) {
+          reject(error)
+        }
+      })
+    },
+
+    getAccount({ commit }: any, userId: string): Promise<ApiResponseModel<AccountModel>> {
+      return new Promise(async (resolve, reject) => {
+        try {
+          let result: ApiResponseModel<AccountModel> = await getAccount(userId)
           resolve(result)
         } catch (error) {
           reject(error)

@@ -16,5 +16,6 @@ export default class OrderModel {
   address1!: string
   address2!: string
   createdAt!: Date
+  assignmented?: Boolean
   orderDetails!: OrderDetailModel[]
 }
